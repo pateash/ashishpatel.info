@@ -1,3 +1,7 @@
+// import jQuery from "jquery"  TODO:(ashishpatel0720) why this not working and we have to use cdn
+//window.jQuery=jQuery
+
+
 import "./scripts/bootstrap.min"
 import "./scripts/SmoothScroll"
 import "./scripts/isotope.pkgd.min"

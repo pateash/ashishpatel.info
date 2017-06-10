@@ -11,15 +11,15 @@
   },
   "devDependencies": {
     "axios": "^0.15.3",
+    "bootstrap-sass": "^3.3.7",
     "cross-env": "^3.2.3",
     "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
     "laravel-mix": "0.*",
     "moment": "^2.18.1",
     "vue": "^2.1.10",
     "vue-router": "^2.5.3",
     "vue-template-compiler": "^2.3.4"
   },
-  "dependencies": {
-    "jquery": "^3.2.1"
-  }
+  "dependencies": {}
 }

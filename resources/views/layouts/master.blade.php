@@ -9,9 +9,8 @@
 	<link href="{{mix('/css/build.css')}}" rel="stylesheet">
 </head>
 <body>
-<!-- Latest compiled and minified JS -->
-</body>
 <div id="app">
+	<!-- Latest compiled and minified JS -->
 	<header>
 		<div class="logo">
 			<h3><a href="#">Arnè</a></h3>
@@ -19,11 +18,11 @@
 		@include("layouts.nav")
 		<div class="social-icons">
 			<ul>
-				<li><a target="_BLANK" href="http://facebook.com/"><i class="fa fa-facebook"></i> </a></li>
-				<li><a target="_BLANK" href="http://pinterest.com/"><i class="fa fa-pinterest"></i> </a></li>
-				<li><a target="_BLANK" href="http://twitter.com/"><i class="fa fa-twitter"></i> </a></li>
-				<li><a target="_BLANK" href="http://behance.com/"><i class="fa fa-behance"></i> </a></li>
-				<li><a target="_BLANK" href="http://dribbble.com/"><i class="fa fa-dribbble"></i> </a></li>
+				<li><a target="_BLANK" href="http://facebook.com/ashishpatel0720"><i class="fa fa-facebook"></i> </a></li>
+				<li><a target="_BLANK" href="http://twitter.com/ashishpatel0720"><i class="fa fa-twitter"></i> </a></li>
+				<li><a target="_BLANK" href="http://github.com/ashishpatel0720"><i class="fa fa-github"></i> </a></li>
+				<li><a target="_BLANK" href="http://linkedin.com/ashishpatel0720"><i class="fa fa-linkedin"></i> </a></li>
+				<li><a target="_BLANK" href="http://linkedin.com/ashishpatel0720"><i class="fa fa-google-plus"></i> </a></li>
 			</ul>
 			<p>Copyright 2017 CraftedTheme <br> Made with Love from Us.</p>
 		</div>
@@ -36,8 +35,10 @@
 			</div>
 		</div>
 	</div>
+
 </div>
 
+{{--TODO: why we have to use CDN here--}}
 <script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>
 <script src="{{mix('/js/build.js')}}"></script>
 </body>

@@ -8,8 +8,10 @@
 // Bootstrap
 //@import "~bootstrap-sass";
 
-//@import "~font-awesome";
+//@import "~font-awesome"; #TODO: why we can't do this(error not readable)
+@import "/node_modules/font-awesome/css/font-awesome.css";
 
+//template specific styles
 @import "linea";
 
 @import "et-line-icons";
