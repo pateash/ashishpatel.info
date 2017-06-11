@@ -13,7 +13,7 @@
 	<!-- Latest compiled and minified JS -->
 	<header>
 		<div class="logo">
-			<h3><a href="#">Arnè</a></h3>
+			<h3><a href="#">AP</a></h3>
 		</div>
 		@include("layouts.nav")
 		<div class="social-icons">
@@ -30,9 +30,7 @@
 	<div class="wrapper">
 		<div class="about">
 			<img src="images/23.jpg" alt="">
-			<div class="inner-item">
-				<router-view></router-view>
-			</div>
+				<router-view></router-view
 		</div>
 	</div>
 

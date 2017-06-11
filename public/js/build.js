@@ -19704,8 +19704,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
@@ -19784,6 +19782,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__scripts_main__ = __webpack_require__(155);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__scripts_main___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__scripts_main__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_vue_router__ = __webpack_require__(124);
+// import jQuery from "jquery"  TODO:(ashishpatel0720) why this not working and we have to use cdn
+//window.jQuery=jQuery
+
+
 
 
 
@@ -22108,11 +22110,12 @@ $(document).ready(function () {
     $(window).load(function () {
         $(".masonry").isotope({
             itemSelector: ".section"
-        }), $(function () {
+        });
+        $(function () {
             var t = $(".masonry").isotope({
                 itemSelector: ".item"
-            }),
-                i = {
+            });
+            i = {
                 numberGreaterThan50: function numberGreaterThan50() {
                     var t = $(this).find(".number").text();
                     return parseInt(t, 10) > 50;

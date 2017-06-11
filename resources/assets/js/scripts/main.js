@@ -5,18 +5,19 @@ $(document).ready(function(){
         additionalMarginTop: 30
     });
     $(window).resize(function(){
-       if ($(window).width() < 992) {
-           $("single-project").removeClass("fixed-single-content");
-       }
+        if ($(window).width() < 992) {
+            $("single-project").removeClass("fixed-single-content");
+        }
     });
 
     $(window).load(function(){
-            $(".masonry").isotope({
+        $(".masonry").isotope({
             itemSelector: ".section"
-        }), $(function() {
+        });
+        $(function() {
             var t = $(".masonry").isotope({
                 itemSelector: ".item"
-            }),
+            });
             i = {
                 numberGreaterThan50: function() {
                     var t = $(this).find(".number").text();
@@ -40,32 +41,32 @@ $(document).ready(function(){
             })
         })
     })
-	 $("#owl-example2").owlCarousel({
-            items : 6,
-            autoPlay : true,
-            navigation : false,
-            pagination : false,
-            paginationNumbers: false,
-            responsive: true,
-            responsiveRefreshRate : 200,
-            responsiveBaseWidth: window,
-            baseClass : "owl-carousel",
-            theme : "owl-theme",
-            lazyLoad : false,
-            lazyFollow : true,
-            lazyEffect : "fade"
-        });
+    $("#owl-example2").owlCarousel({
+        items : 6,
+        autoPlay : true,
+        navigation : false,
+        pagination : false,
+        paginationNumbers: false,
+        responsive: true,
+        responsiveRefreshRate : 200,
+        responsiveBaseWidth: window,
+        baseClass : "owl-carousel",
+        theme : "owl-theme",
+        lazyLoad : false,
+        lazyFollow : true,
+        lazyEffect : "fade"
+    });
 
-        $(window).load(function(){
-            var $menu = $('header ul'),
+    $(window).load(function(){
+        var $menu = $('header ul'),
             $menuTrigger = $('.menu-item-has-children > a');
-            $menuTrigger.on("click",function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                var $this = $(this);
-                $this.toggleClass("active").next('ul').slideToggle("fast");
-            });
+        $menuTrigger.on("click",function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var $this = $(this);
+            $this.toggleClass("active").next('ul').slideToggle("fast");
         });
+    });
 
-        $("#menu").slicknav();
+    $("#menu").slicknav();
 });
