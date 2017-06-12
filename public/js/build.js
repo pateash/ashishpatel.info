@@ -18848,7 +18848,7 @@ var app = new Vue({
 /* 126 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+throw new Error("Module build failed: ModuleBuildError: Module build failed: \n    font-size=;\n   ^\n      Property \"font-size\" must be followed by a ':'\n      in /home/ashish/Desktop/portfolio/resources/assets/sass/style.scss (line 1104, column 5)\n    at runLoaders (/home/ashish/Desktop/portfolio/node_modules/webpack/lib/NormalModule.js:192:19)\n    at /home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at Object.asyncSassJobQueue.push [as callback] (/home/ashish/Desktop/portfolio/node_modules/sass-loader/lib/loader.js:57:13)\n    at Object.<anonymous> (/home/ashish/Desktop/portfolio/node_modules/sass-loader/node_modules/async/dist/async.js:2243:31)\n    at Object.callback (/home/ashish/Desktop/portfolio/node_modules/sass-loader/node_modules/async/dist/async.js:906:16)\n    at options.error (/home/ashish/Desktop/portfolio/node_modules/node-sass/lib/index.js:294:32)");
 
 /***/ }),
 /* 127 */
@@ -19697,6 +19697,42 @@ module.exports = function spread(callback) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -34836,10 +34872,91 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _vm._m(0)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "panel panel-default"
+    staticClass: "inner-item"
   }, [_c('div', {
-    staticClass: "panel-body"
-  }, [_vm._v("\n      About\n    ")])])
+    staticClass: "text"
+  }, [_c('h4', [_vm._v("Hello , I'm Ashish Patel")]), _vm._v(" "), _c('span', [_vm._v("Developer")]), _vm._v(" "), _c('div', {
+    staticClass: "columns"
+  }, [_c('p', [_vm._v("\n                                hello everybody, i am Ashish Patel,\n                                a Final Year Computer Science student at "), _c('a', {
+    attrs: {
+      "href": "//manit.ac.in"
+    }
+  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India)")]), _vm._v("\n                                I am a computer geek who loves linux and opensource projects,  I love to learn new technologies and try to learn them as soon as possible.\n                                I love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t\t\t\t\t")]), _vm._v(" "), _c('p', [_vm._v("\n                                I have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
+    attrs: {
+      "href": "//laravel.com"
+    }
+  }, [_vm._v("Laravel")]), _vm._v(",\n                                "), _c('a', {
+    attrs: {
+      "href": "//codeigniter.com"
+    }
+  }, [_vm._v("Codeignitor")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "href": "//flask.pocoo.org/"
+    }
+  }, [_vm._v("Flask")]), _vm._v(",\n                                I also came to Know Javascript and I have worked in "), _c('a', {
+    attrs: {
+      "href": "//vuejs.org"
+    }
+  }, [_vm._v("Vue Javascript Framework")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "href": "//jquery.com"
+    }
+  }, [_vm._v("Jquery")]), _vm._v("\n\n                                In Desktop App Developnment, I know Java and "), _c('a', {
+    attrs: {
+      "href": "docs.oracle.com/javafx/"
+    }
+  }, [_vm._v("JavaFX API")]), _vm._v(" and I also know Java Swing API.\n\n                                As I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\n                                I also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\n                               As Last Note My Internship was in "), _c('a', {
+    attrs: {
+      "href": "//carwale.com"
+    }
+  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n                            ")])]), _vm._v(" "), _c('div', {
+    staticClass: "our-clients"
+  }, [_c('h1', [_vm._v("ToolBox")]), _vm._v(" "), _c('div', {
+    staticClass: "row items owl-carousel",
+    attrs: {
+      "id": "owl-example2"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "images/logo1.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo2.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo3.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo4.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo5.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo6.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo7.png",
+      "alt": ""
+    }
+  }), _vm._v(" "), _c('img', {
+    attrs: {
+      "src": "images/logo1.png",
+      "alt": ""
+    }
+  })])])])])
 }]}
 module.exports.render._withStripped = true
 if (false) {

@@ -6,6 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Arnè</title>
+	<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
 	<link href="{{mix('/css/build.css')}}" rel="stylesheet">
 </head>
 <body>
@@ -20,20 +21,19 @@
 			<ul>
 				<li><a target="_BLANK" href="http://facebook.com/ashishpatel0720"><i class="fa fa-facebook"></i> </a></li>
 				<li><a target="_BLANK" href="http://twitter.com/ashishpatel0720"><i class="fa fa-twitter"></i> </a></li>
-				<li><a target="_BLANK" href="http://github.com/ashishpatel0720"><i class="fa fa-github"></i> </a></li>
+				<li><a targ0et="_BLANK" href="http://github.com/ashishpatel0720"><i class="fa fa-github"></i> </a></li>
 				<li><a target="_BLANK" href="http://linkedin.com/ashishpatel0720"><i class="fa fa-linkedin"></i> </a></li>
-				<li><a target="_BLANK" href="http://linkedin.com/ashishpatel0720"><i class="fa fa-google-plus"></i> </a></li>
 			</ul>
+			<li><a target="_BLANK" href="http://linkedin.com/ashishpatel0720"><i class="fa fa-google-plus"></i> </a></li>
 			<p>Copyright 2017 CraftedTheme <br> Made with Love from Us.</p>
 		</div>
 	</header>
 	<div class="wrapper">
 		<div class="about">
 			<img src="images/23.jpg" alt="">
-				<router-view></router-view
+			<router-view></router-view
 		</div>
 	</div>
-
 </div>
 
 {{--TODO: why we have to use CDN here--}}
