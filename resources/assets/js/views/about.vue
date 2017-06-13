@@ -23,35 +23,12 @@
 					<br>
 					I also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.
 				</p>
-				<p>
+				<p style="margin:1em;">
 					I know it is a lot to take in, but  As Last Note My Internship was in <a href="//carwale.com">CarWale</a> and I have worked on BigData with Scala and Spark Stream Processing.
 					and my Minor Project was on Machine Learning with python Scikit-learn library.
 				</p>
 			</div>
-			<div class="our-clients"> <!--here represent toolbox-->
-				<h4>ToolBox</h4>
-				<div class="row items owl-carousel" id="owl-example2">
-					<img src="images/logo1.png" class="img-responsive" alt="">
-					<img src="images/logo2.png" class="img-responsive" alt="">
-					<img src="images/logo3.svg" class="img-responsive" alt="">
-					<img src="images/logo4.png" class="img-responsive" alt="">
-					<img src="images/logo5.png" class="img-responsive" alt="">
-					<img src="images/logo6.png" class="img-responsive" alt="">
-					<img src="images/logo7.png" class="img-responsive" alt="">
-					<img src="images/logo8.png" class="img-responsive" alt="">
-					<img src="images/logo9.png" class="img-responsive" alt="">
-					<img src="images/logo10.png" class="img-responsive" alt="">
-					<img src="images/logo11.png" class="img-responsive" alt="">
-					<img src="images/logo12.png" class="img-responsive" alt="">
-					<img src="images/logo13.png" class="img-responsive" alt="">
-					<img src="images/logo14.png" class="img-responsive" alt="">
-					<img src="images/logo15.svg" class="img-responsive" alt="">
-					<img src="images/logo16.png" class="img-responsive" alt="">
 
-					<img src="images/logo1.png" class="img-responsive" alt="">
-
-				</div>
-			</div>
 		</div>
 	</div>
 </template>

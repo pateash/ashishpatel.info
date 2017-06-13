@@ -1100,10 +1100,10 @@ a:link,a:visited{
   text-decoration: none;
   color: #56C8D4;
 }
-.selected,.router-link-exact-active selected{
+.selected,.router-link-exact-active{
   font-size:1.2em;
-  font-family:fantasy;
-  color: #56C8D4;
+  font-weight:bolder;
+  font-style: oblique;
   text-decoration: none;
 }
 
