@@ -39,7 +39,7 @@
                 <div class="inner-item">
                         <div class="our-clients" style="margin:0em;margin-top:-2em;"> <!--here represent toolbox-->
                             <h4>ToolBox</h4>
-                            <div class="row items owl-carousel" id="owl-example2">
+                            <div class="row items owl-carousel" id="owl-toolbox">
                                 <img src="images/logo1.png" class="img-responsive" alt="">
                                 <img src="images/logo2.png" class="img-responsive" alt="">
                                 <img src="images/logo3.svg" class="img-responsive" alt="">

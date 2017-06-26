@@ -41,7 +41,8 @@ $(document).ready(function(){
             })
         })
     })
-    $("#owl-example2").owlCarousel({
+
+    $("#owl-toolbox").owlCarousel({
         items : 6,
         autoPlay : true,
         navigation : false,
@@ -56,7 +57,22 @@ $(document).ready(function(){
         lazyFollow : true,
         lazyEffect : "fade"
     });
-
+    //added by ashishpatel0720
+$("#owl-social-icons").owlCarousel({
+        items : 6,
+        autoPlay : true,
+        navigation : false,
+        pagination : false,
+        paginationNumbers: false,
+        responsive: true,
+        responsiveRefreshRate : 200,
+        responsiveBaseWidth: window,
+        baseClass : "owl-carousel",
+        theme : "owl-theme",
+        lazyLoad : false,
+        lazyFollow : true,
+        lazyEffect : "fade"
+    });
     $(window).load(function(){
         var $menu = $('header ul'),
             $menuTrigger = $('.menu-item-has-children > a');

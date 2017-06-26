@@ -1,7 +1,7 @@
 <template>
 	<div class="inner-item">
 		<div class="text">
-			<h4>Hello , I'm Ashish Patel</h4>
+			<h4>About</h4>
 			<div>
 				<p style="margin:0.7em">
 					hello everybody, i am Ashish Patel,

@@ -18848,7 +18848,7 @@ var app = new Vue({
 /* 126 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: ModuleBuildError: Module build failed: \n    font-size=;\n   ^\n      Property \"font-size\" must be followed by a ':'\n      in /home/ashish/Desktop/portfolio/resources/assets/sass/style.scss (line 1104, column 5)\n    at runLoaders (/home/ashish/Desktop/portfolio/node_modules/webpack/lib/NormalModule.js:192:19)\n    at /home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:364:11\n    at /home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:230:18\n    at context.callback (/home/ashish/Desktop/portfolio/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\n    at Object.asyncSassJobQueue.push [as callback] (/home/ashish/Desktop/portfolio/node_modules/sass-loader/lib/loader.js:57:13)\n    at Object.<anonymous> (/home/ashish/Desktop/portfolio/node_modules/sass-loader/node_modules/async/dist/async.js:2243:31)\n    at Object.callback (/home/ashish/Desktop/portfolio/node_modules/sass-loader/node_modules/async/dist/async.js:906:16)\n    at options.error (/home/ashish/Desktop/portfolio/node_modules/node-sass/lib/index.js:294:32)");
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 /* 127 */
@@ -19731,15 +19731,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
@@ -19874,7 +19865,7 @@ var routes = [{
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
     routes: routes,
-    linkActiveClass: 'active'
+    linkActiveClass: 'selected'
 }));
 
 /***/ }),
@@ -34736,13 +34727,13 @@ var Component = __webpack_require__(2)(
   /* script */
   __webpack_require__(145),
   /* template */
-  __webpack_require__(165),
+  __webpack_require__(167),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/home/ashish/Desktop/portfolio/resources/assets/js/views/about.vue"
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/about.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] about.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -34753,9 +34744,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1aeedcba", Component.options)
+    hotAPI.createRecord("data-v-740e2f3e", Component.options)
   } else {
-    hotAPI.reload("data-v-1aeedcba", Component.options)
+    hotAPI.reload("data-v-740e2f3e", Component.options)
   }
 })()}
 
@@ -34770,13 +34761,13 @@ var Component = __webpack_require__(2)(
   /* script */
   __webpack_require__(146),
   /* template */
-  __webpack_require__(167),
+  __webpack_require__(165),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/home/ashish/Desktop/portfolio/resources/assets/js/views/contact.vue"
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/contact.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] contact.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -34787,9 +34778,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-75278936", Component.options)
+    hotAPI.createRecord("data-v-2ddd2874", Component.options)
   } else {
-    hotAPI.reload("data-v-75278936", Component.options)
+    hotAPI.reload("data-v-2ddd2874", Component.options)
   }
 })()}
 
@@ -34804,13 +34795,13 @@ var Component = __webpack_require__(2)(
   /* script */
   __webpack_require__(147),
   /* template */
-  __webpack_require__(168),
+  __webpack_require__(166),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/home/ashish/Desktop/portfolio/resources/assets/js/views/home.vue"
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/home.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] home.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -34821,9 +34812,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-77dec38e", Component.options)
+    hotAPI.createRecord("data-v-2dfb77bb", Component.options)
   } else {
-    hotAPI.reload("data-v-77dec38e", Component.options)
+    hotAPI.reload("data-v-2dfb77bb", Component.options)
   }
 })()}
 
@@ -34838,13 +34829,13 @@ var Component = __webpack_require__(2)(
   /* script */
   __webpack_require__(148),
   /* template */
-  __webpack_require__(166),
+  __webpack_require__(168),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/home/ashish/Desktop/portfolio/resources/assets/js/views/projects.vue"
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] projects.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -34855,9 +34846,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1f4a8b54", Component.options)
+    hotAPI.createRecord("data-v-7d48d3d6", Component.options)
   } else {
-    hotAPI.reload("data-v-1f4a8b54", Component.options)
+    hotAPI.reload("data-v-7d48d3d6", Component.options)
   }
 })()}
 
@@ -34866,129 +34857,6 @@ module.exports = Component.exports
 
 /***/ }),
 /* 165 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _vm._m(0)
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "inner-item"
-  }, [_c('div', {
-    staticClass: "text"
-  }, [_c('h4', [_vm._v("Hello , I'm Ashish Patel")]), _vm._v(" "), _c('span', [_vm._v("Developer")]), _vm._v(" "), _c('div', {
-    staticClass: "columns"
-  }, [_c('p', [_vm._v("\n                                hello everybody, i am Ashish Patel,\n                                a Final Year Computer Science student at "), _c('a', {
-    attrs: {
-      "href": "//manit.ac.in"
-    }
-  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India)")]), _vm._v("\n                                I am a computer geek who loves linux and opensource projects,  I love to learn new technologies and try to learn them as soon as possible.\n                                I love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t\t\t\t\t")]), _vm._v(" "), _c('p', [_vm._v("\n                                I have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
-    attrs: {
-      "href": "//laravel.com"
-    }
-  }, [_vm._v("Laravel")]), _vm._v(",\n                                "), _c('a', {
-    attrs: {
-      "href": "//codeigniter.com"
-    }
-  }, [_vm._v("Codeignitor")]), _vm._v(" and "), _c('a', {
-    attrs: {
-      "href": "//flask.pocoo.org/"
-    }
-  }, [_vm._v("Flask")]), _vm._v(",\n                                I also came to Know Javascript and I have worked in "), _c('a', {
-    attrs: {
-      "href": "//vuejs.org"
-    }
-  }, [_vm._v("Vue Javascript Framework")]), _vm._v(" and "), _c('a', {
-    attrs: {
-      "href": "//jquery.com"
-    }
-  }, [_vm._v("Jquery")]), _vm._v("\n\n                                In Desktop App Developnment, I know Java and "), _c('a', {
-    attrs: {
-      "href": "docs.oracle.com/javafx/"
-    }
-  }, [_vm._v("JavaFX API")]), _vm._v(" and I also know Java Swing API.\n\n                                As I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\n                                I also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\n                               As Last Note My Internship was in "), _c('a', {
-    attrs: {
-      "href": "//carwale.com"
-    }
-  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n                            ")])]), _vm._v(" "), _c('div', {
-    staticClass: "our-clients"
-  }, [_c('h1', [_vm._v("ToolBox")]), _vm._v(" "), _c('div', {
-    staticClass: "row items owl-carousel",
-    attrs: {
-      "id": "owl-example2"
-    }
-  }, [_c('img', {
-    attrs: {
-      "src": "images/logo1.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo2.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo3.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo4.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo5.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo6.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo7.png",
-      "alt": ""
-    }
-  }), _vm._v(" "), _c('img', {
-    attrs: {
-      "src": "images/logo1.png",
-      "alt": ""
-    }
-  })])])])])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1aeedcba", module.exports)
-  }
-}
-
-/***/ }),
-/* 166 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _vm._m(0)
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-body"
-  }, [_vm._v("\n       Project\n    ")])])
-}]}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1f4a8b54", module.exports)
-  }
-}
-
-/***/ }),
-/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -35004,12 +34872,12 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-75278936", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-2ddd2874", module.exports)
   }
 }
 
 /***/ }),
-/* 168 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -35025,7 +34893,97 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-77dec38e", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-2dfb77bb", module.exports)
+  }
+}
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "inner-item"
+  }, [_c('div', {
+    staticClass: "text"
+  }, [_c('h4', [_vm._v("Hello , I'm Ashish Patel")]), _vm._v(" "), _c('div', [_c('p', {
+    staticStyle: {
+      "margin": "0.7em"
+    }
+  }, [_vm._v("\n\t\t\t\thello everybody, i am Ashish Patel,\n\t\t\t\ta Final Year Computer Science student at "), _c('a', {
+    attrs: {
+      "href": "//manit.ac.in"
+    }
+  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India).")]), _c('br'), _vm._v(" "), _c('br'), _vm._v(" I am a computer geek who loves linux and opensource projects,  I love to learn new technologies and try to learn them as soon as possible.\n\t\t\t\tI love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t")]), _vm._v(" "), _c('p', {
+    staticStyle: {
+      "margin": "1em"
+    }
+  }, [_vm._v("\n\t\t\t\tI have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
+    attrs: {
+      "href": "//laravel.com"
+    }
+  }, [_vm._v("Laravel")]), _vm._v(",\n\t\t\t\t"), _c('a', {
+    attrs: {
+      "href": "//codeigniter.com"
+    }
+  }, [_vm._v("Codeignitor")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "href": "//flask.pocoo.org"
+    }
+  }, [_vm._v("Flask.")]), _vm._v(" "), _c('br'), _vm._v("\n\t\t\t\tI also came to Know Javascript and I have worked in "), _c('a', {
+    attrs: {
+      "href": "//vuejs.org"
+    }
+  }, [_vm._v("Vue Javascript Framework")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "href": "//jquery.com"
+    }
+  }, [_vm._v("Jquery API.")])]), _vm._v(" "), _c('p', {
+    staticStyle: {
+      "margin": "1em"
+    }
+  }, [_vm._v("\n\t\t\t\tIn Desktop App Developnment, I know Java and "), _c('a', {
+    attrs: {
+      "href": "//docs.oracle.com/javafx"
+    }
+  }, [_vm._v("JavaFX API.")]), _vm._v(".\n\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\tAs I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\tI also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\t\t\t")]), _vm._v(" "), _c('p', {
+    staticStyle: {
+      "margin": "1em"
+    }
+  }, [_vm._v("\n\t\t\t\tI know it is a lot to take in, but  As Last Note My Internship was in "), _c('a', {
+    attrs: {
+      "href": "//carwale.com"
+    }
+  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n\t\t\t\tand my Minor Project was on Machine Learning with python Scikit-learn library.\n\t\t\t")])])])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-740e2f3e", module.exports)
+  }
+}
+
+/***/ }),
+/* 168 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-body"
+  }, [_vm._v("\n       Project\n    ")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-7d48d3d6", module.exports)
   }
 }
 
