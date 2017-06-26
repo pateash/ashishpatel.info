@@ -1092,7 +1092,7 @@ blockquote {
     margin-bottom: 30px;
   }
 }
-
+//------------------------------------------------------------------
 //added by ashishpatel0720
 
 //for overriding default link style
@@ -1113,4 +1113,9 @@ a:hover{
 body{
   font-family: 'Quicksand', sans-serif;
   font-size:1.1em;
+}
+
+//overriding to keep font-size with bulma
+.fa-4x{
+  font-size:50px;
 }

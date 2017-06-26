@@ -58,7 +58,7 @@ $(document).ready(function(){
         lazyEffect : "fade"
     });
     //added by ashishpatel0720
-$("#owl-social-icons").owlCarousel({
+    $("#owl-social-icons").owlCarousel({
         items : 6,
         autoPlay : true,
         navigation : false,

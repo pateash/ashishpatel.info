@@ -25,26 +25,31 @@
 				</p>
 				<p style="margin:1em;">
 					I know it is a lot to take in, but  As Last Note My Internship was in <a href="//carwale.com">CarWale</a> and I have worked on BigData with Scala and Spark Stream Processing.
-					and my Minor Project was on Machine Learning with python Scikit-learn library.
+					and my Minor Project was on Machine Learning with python Scikit-learn library.<br><br>
+				<a class="button  is-striped " href=/#/about>Learn more</a>
+
 				</p>
 				<div class="social-icons">
-
-				</div>
-				<!--todo: do the social icons to look like corosel -->
-				                        <div class="our-clients" style="margin:0em;margin-top:-2em;"> <!--here represent toolbox-->
-				<div class="row items owl-carousel" id="owl-social-icons">
-					<ul>
-						<li><a href=https://linkedin.com/in/ashishdotme><i class="fa fa-linkedin-square fa-2x"></i></a></li>
-						<li><a href=https://facebook.com/ashishdotme><i class="fa fa-facebook fa-2x"></i></a></li>
-						<li><a href="cdn-cgi/l/email-protection.html#4f2e3c27263c273c3a3c2726233f2e3b2a230f28222e2623612c2022701c3a2d252a2c3b720726"><i class="fa fa-envelope-o fa-2x"></i></a></li>
-						<li><a href=https://instagram.com/ashishdotme><i class="fa fa-instagram fa-2x"></i></a></li>
-						<li><a href=https://stackoverflow.com/users/6648256/ashish-patel><i class="fa fa-stack-overflow fa-2x"></i></a></li>
-						<li><a href=https://github.com/ashishdotme><i class="fa fa-github fa-2x"></i></a></li>
-						<li><a href=https://twitter.com/ashishdotme><i class="fa fa-twitter fa-2x"></i></a></li>
-					</ul>
+					<div class="wrapper">
+						<div class="about">
+							<h4 style="margin-bottom:-2em">Find Me</h4>
+							<div class="inner-item">
+								<div class="our-clients" style="margin:0em;margin-top:-2em;"> <!--here represent toolbox-->
+									<div class="row items owl-carousel" id="owl-social-icons">
+										<a href=https://linkedin.com/in/ashishpatel0720><i class="fa fa-linkedin-square fa-4x"></i></a>
+										<a href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-4x"></i></a>
+										<a href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-4x"></i></a>
+										<a href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-4x"></i></a>
+										<a href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-4x"></i></a>
+										<a href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-4x"></i></a>
+										<a href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-4x"></i></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 </template>
