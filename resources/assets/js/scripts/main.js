@@ -55,7 +55,7 @@ $(document).on('ready click',function(){
         responsiveBaseWidth: window,
         baseClass : "owl-carousel",
         theme : "owl-theme",
-        lazyLoad : false,
+        lazyLoad : true,
         lazyFollow : true,
         lazyEffect : "fade"
     });
@@ -71,7 +71,7 @@ $(document).on('ready click',function(){
         responsiveBaseWidth: window,
         baseClass : "owl-carousel",
         theme : "owl-theme",
-        lazyLoad : false,
+        lazyLoad : true,
         lazyFollow : true,
         lazyEffect : "fade"
     });
