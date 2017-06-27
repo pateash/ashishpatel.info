@@ -14,5 +14,8 @@
         <li>
             <router-link to="/contact">Contact</router-link>
         </li>
+        <li>
+            <a src="/assets/cv-ashish.pdf">CV</a>
+        </li>
     </ul>
 </div>

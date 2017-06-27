@@ -43,13 +43,13 @@ $(document).ready(function(){
     })
 
     $("#owl-toolbox").owlCarousel({
-        items : 6,
+        items : 15,
         autoPlay : true,
         navigation : false,
         pagination : false,
         paginationNumbers: false,
         responsive: true,
-        responsiveRefreshRate : 200,
+        responsiveRefreshRate : 50,
         responsiveBaseWidth: window,
         baseClass : "owl-carousel",
         theme : "owl-theme",
@@ -59,7 +59,7 @@ $(document).ready(function(){
     });
     //added by ashishpatel0720
     $("#owl-social-icons").owlCarousel({
-        items : 6,
+        items : 7,
         autoPlay : true,
         navigation : false,
         pagination : false,
