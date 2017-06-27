@@ -43,7 +43,7 @@ $(document).ready(function(){
     })
 
     $("#owl-toolbox").owlCarousel({
-        items : 15,
+        items : 5, //items to be seen once, others will be seen using courosel
         autoPlay : true,
         navigation : false,
         pagination : false,
@@ -59,7 +59,7 @@ $(document).ready(function(){
     });
     //added by ashishpatel0720
     $("#owl-social-icons").owlCarousel({
-        items : 7,
+        items : 5,
         autoPlay : true,
         navigation : false,
         pagination : false,
