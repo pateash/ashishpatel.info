@@ -1,5 +1,7 @@
-$(document).ready(function(){
 
+//TODO: why icons/images not showing when we navigate to other route and come back
+//binding event on button clicks so we do not get problem
+$(document).on('ready click',function(){
     document.addEventListener("touchstart",function(){},!0);
     $(".fixed-single-content .items").theiaStickySidebar({
         additionalMarginTop: 30

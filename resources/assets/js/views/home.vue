@@ -33,7 +33,7 @@
 						<div class="about">
 							<h4 style="margin-bottom:-2em">Find Me</h4>
 							<div class="inner-item">
-								<div class="our-clients" style="margin:0em;margin-top:-2em;"> <!--here represent toolbox-->
+								<div class="our-clients" style="margin:0em;margin:-2em -2em;"> <!--here represent toolbox-->
 									<div class="row items owl-carousel" id="owl-social-icons">
 										<a href=https://linkedin.com/in/ashishpatel0720><i class="fa fa-linkedin-square fa-4x"></i></a>
 										<a href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-4x"></i></a>

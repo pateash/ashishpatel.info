@@ -20,3 +20,7 @@ const app = new Vue({
     el: '#app',
     router:router
 });
+
+window.addEventListener('popstate', () => {
+  app.currentRoute = window.location.pathname
+})
