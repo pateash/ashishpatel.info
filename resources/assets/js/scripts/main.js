@@ -1,7 +1,9 @@
 
 //TODO: why icons/images not showing when we navigate to other route and come back
 //binding event on button clicks so we do not get problem
-$(document).on('ready click',function(){
+
+$(document).on('ready click',function(evt){
+    evt.stopPropagation();
     document.addEventListener("touchstart",function(){},!0);
     $(".fixed-single-content .items").theiaStickySidebar({
         additionalMarginTop: 30
@@ -75,6 +77,7 @@ $(document).on('ready click',function(){
         lazyFollow : true,
         lazyEffect : "fade"
     });
+
     $(window).load(function(){
         var $menu = $('header ul'),
             $menuTrigger = $('.menu-item-has-children > a');
@@ -85,6 +88,24 @@ $(document).on('ready click',function(){
             $this.toggleClass("active").next('ul').slideToggle("fast");
         });
     });
-
+    console.clear();
     $("#menu").slicknav();
+
+    // TODO: fix error -> nav do not automatically fixed
+    // target=evt.target;
+    // ts=$('a[role="menuitem"]');
+    // var flag=false;
+    // for(t in ts) {
+    //     console.error("targets-> " + t);
+    //     if (t == target) {
+    //         flag = true;
+    //         break;
+    //     }
+    // }
+    // if(flag)
+    // $(".slicknav_icon-bar").click();
+// else console.error("target-"+target),console.error("targets-"+$('a[role="menuitem"]'));
+
+
+
 });
