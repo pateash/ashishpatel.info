@@ -7,8 +7,12 @@ let routes=[
         component:require("./views/home.vue")
     },
     {
-        path:"/about",
-        component:require("./views/about.vue")
+        path:"/education",
+        component:require("./views/education.vue")
+    },
+    {
+        path:"/work",
+        component:require("./views/work.vue")
     },
     {
         path:"/projects",

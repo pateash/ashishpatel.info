@@ -2,54 +2,53 @@
     <div class="columns">
         <div class="column">
             <div class="inner-item" style="margin:0em">
-                <h4 style="margin-bottom: 0.5em;">Projects</h4>
-                <!--one element representing one Project-->
-                <!--Cassandra Bigquery-->
+                <h4 style="margin-bottom: 0.5em;">Education</h4>
+
+                <!--one element representing one education qualification-->
+                <!--b.tech-->
                 <div class="box">
                     <article class="media">
                         <div class="media-left">
                             <figure class="image is-64x64">
-                                <img  style="border-radius: 0.5em" src="http://www.androidos.in/wp-content/uploads/2013/12/carwale-logo.png" alt="Image">
+                                <img src="https://img.collegepravesh.com/2015/08/MANIT-Logo.png" alt="Image">
                             </figure>
                         </div>
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em">Cassandra BigQuery <span style="font-size:0.7em"> , Intern Project </span></span>
+                                    <span style="font-size:1.4em">Bachelor of Technology <span style="font-size:0.6em"> , Computer Science & Engineering (2014 - 2018)</span></span>
                                     <br>
-                                    Carwale.com , May - June 2017<br>
-                                    <b> Python , Flask, Scala , Spark , Cassandra</b>
+                                    MANIT Bhopal<br>
+                                    <b>CGPA : 8.48/10</b>
                                 </p>
                             </div><!--font-awesome icons-->
                         </div>
                     </article>
                 </div>
 
-                <!--KisanMitra-->
+                <!--higher secondary-->
                 <div class="box">
                     <article class="media">
                         <div class="media-left">
                             <figure class="image is-64x64">
-                                <img  style="border-radius: 0.5em" src="http://i.imgur.com/RxaZWYI.jpg" alt="Image">
+                                <img src="https://upload.wikimedia.org/wikipedia/en/d/d5/Board_of_Secondary_Education%2C_Madhya_Pradesh_logo.jpg" alt="Image">
                             </figure>
                         </div>
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em">Kisan Mitra <span style="font-size:0.7em"> , Minor Project </span>
-                                     <!--TODO: add v-on and show modal-->
-                                        <a v-on=""><span class="tag is-primary"> Know More </span></a>
-                                    </span>
+                                    <span style="font-size:1.4em">XII (Higher Secondary)<span style="font-size:0.6em"> , Science (2012 - 2013)</span></span>
                                     <br>
-                                    MANIT , Jan - March, 2017<br>
-                                    <b>Machine Learning , Python, Scikit-Learn ,PHP , Laravel , JQuery</b>
+                                    I.P.S. Academy, Bhind Madhya Pradesh , India<br>
+                                    <b>Percentage : 90.20%</b>
                                 </p>
                             </div><!--font-awesome icons-->
                         </div>
                     </article>
                 </div>
+
                 <!--high school-->
-                <div class="box">
+                 <div class="box">
                     <article class="media">
                         <div class="media-left">
                             <figure class="image is-64x64">

@@ -1,5 +1,9 @@
-$(document).ready(function(){
 
+//TODO: why icons/images not showing when we navigate to other route and come back
+//binding event on button clicks so we do not get problem
+
+$(document).on('ready click',function(evt){
+    evt.stopPropagation();
     document.addEventListener("touchstart",function(){},!0);
     $(".fixed-single-content .items").theiaStickySidebar({
         additionalMarginTop: 30
@@ -43,23 +47,23 @@ $(document).ready(function(){
     })
 
     $("#owl-toolbox").owlCarousel({
-        items : 6,
+        items : 5, //items to be seen once, others will be seen using courosel
         autoPlay : true,
         navigation : false,
         pagination : false,
         paginationNumbers: false,
         responsive: true,
-        responsiveRefreshRate : 200,
+        responsiveRefreshRate : 50,
         responsiveBaseWidth: window,
         baseClass : "owl-carousel",
         theme : "owl-theme",
-        lazyLoad : false,
+        lazyLoad : true,
         lazyFollow : true,
         lazyEffect : "fade"
     });
     //added by ashishpatel0720
     $("#owl-social-icons").owlCarousel({
-        items : 6,
+        items : 5,
         autoPlay : true,
         navigation : false,
         pagination : false,
@@ -69,10 +73,11 @@ $(document).ready(function(){
         responsiveBaseWidth: window,
         baseClass : "owl-carousel",
         theme : "owl-theme",
-        lazyLoad : false,
+        lazyLoad : true,
         lazyFollow : true,
         lazyEffect : "fade"
     });
+
     $(window).load(function(){
         var $menu = $('header ul'),
             $menuTrigger = $('.menu-item-has-children > a');
@@ -83,6 +88,24 @@ $(document).ready(function(){
             $this.toggleClass("active").next('ul').slideToggle("fast");
         });
     });
-
+    console.clear();
     $("#menu").slicknav();
+
+    // TODO: fix error -> nav do not automatically fixed
+    // target=evt.target;
+    // ts=$('a[role="menuitem"]');
+    // var flag=false;
+    // for(t in ts) {
+    //     console.error("targets-> " + t);
+    //     if (t == target) {
+    //         flag = true;
+    //         break;
+    //     }
+    // }
+    // if(flag)
+    // $(".slicknav_icon-bar").click();
+// else console.error("target-"+target),console.error("targets-"+$('a[role="menuitem"]'));
+
+
+
 });
