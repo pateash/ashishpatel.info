@@ -26,7 +26,8 @@
             <a href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-2x"></i></a>
             <a href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-2x"></i></a>
 
-            <p><span class="icon"><i class="fa fa-code"></i></span> by <a href="//github.com/ashishpatel0720">Ashish</a> in <span class="icon"><i class="fa fa-heart" style="color:#ff4d44"></i></span> with <br><a href="//laravel.com"><img src="/images/laravel-icon.png" ></a> <a href="//vuejs.org"><img src="/images/vue-icon.png"></a>.</p>
+            <p><span class="icon"><i class="fa fa-code"></i></span> by <b><a href="//github.com/ashishpatel0720"
+                                                                              style="color:#ff7018">Ashish</a></b> in <span class="icon"><i class="fa fa-heart" style="color:#ff4d44"></i></span> with <br><a href="//laravel.com"><img src="/images/laravel-icon.png" ></a> <a href="//vuejs.org"><img src="/images/vue-icon.png"></a>.</p>
             <p>Copyright &copy; 2017 <a href="//github.com/ashishpatel0720" >@ashishpatel0720</a> </p>
         </div>
     </header>
