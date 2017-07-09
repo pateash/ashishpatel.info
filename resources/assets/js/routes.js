@@ -15,13 +15,21 @@ let routes=[
         component:require("./views/work.vue")
     },
     {
+        path:"/contact",
+        component:require("./views/contact.vue")
+    },
+    {
         path:"/projects",
         component:require("./views/projects.vue")
     },
     {
-        path:"/contact",
-        component:require("./views/contact.vue")
-    }
+        path:"/projects/kisanmitra",
+        component:require("./views/projects/kisanmitra.vue")
+    },
+    {
+        path:"/projects/bigquery",
+        component:require("./views/projects/bigquery.vue")
+    },
 ]
 
 export default new VueRouter({

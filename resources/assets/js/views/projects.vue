@@ -15,7 +15,9 @@
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em">Cassandra BigQuery <span style="font-size:0.7em"> , Intern Project </span></span>
+                                    <span style="font-size:1.4em">Cassandra BigQuery <span style="font-size:0.7em"> , Internship Project </span></span>
+                                                                           <router-link to="/projects/kisanmitra"><span class="tag is-primary"> Know More </span></router-link>
+
                                     <br>
                                     Carwale.com , May - June 2017<br>
                                     <b> Python , Flask, Scala , Spark , Cassandra</b>
@@ -37,8 +39,7 @@
                             <div class="content">
                                 <p><!--title-->
                                     <span style="font-size:1.4em">Kisan Mitra <span style="font-size:0.7em"> , Minor Project </span>
-                                     <!--TODO: add v-on and show modal-->
-                                        <a v-on=""><span class="tag is-primary"> Know More </span></a>
+                                        <router-link to="/projects/kisanmitra"><span class="tag is-primary"> Know More </span></router-link>
                                     </span>
                                     <br>
                                     MANIT , Jan - March, 2017<br>
@@ -77,3 +78,7 @@
 
     }
 </script>
+
+<style>
+
+</style>

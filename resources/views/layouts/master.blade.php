@@ -32,16 +32,15 @@
         </div>
     </header>
     <div class="wrapper">
-        <div class="about">
-            <img src="images/23.jpg" alt="">
-            <router-view></router-view>
+        <div class="about" style="margin:-1.7em;">
+            <router-view ></router-view>
         </div>
     </div>
 </div>
 <div class="wrapper" style="margin-top:0.5em;">
-    <div class="about">
+    <div class="about"  style="margin:-1.7em;">
         <div class="inner-item">
-            <div class="our-clients" style="margin:0em;margin-top:-2em;"> <!--here represent toolbox-->
+            <div class="our-clients" > <!--here represent toolbox-->
                 <h4>Skills</h4>
                 <div class="row items owl-carousel" id="owl-toolbox" >
                     <img src="images/logo1.png" class="img-responsive" alt="" >
@@ -70,5 +69,4 @@
 <script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>
 <script src="{{mix('/js/build.js')}}"></script>
 </body>
-<!-- Mirrored from www.craftedtheme.com/arne/about.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 30 Apr 2017 09:19:06 GMT -->
 </html>

@@ -26,7 +26,6 @@
 				<p style="margin:1em;">
 					I know it is a lot to take in, but  As Last Note My Internship was in <a href="//carwale.com">CarWale</a> and I have worked on BigData with Scala and Spark Stream Processing.
 					and my Minor Project was on Machine Learning with python Scikit-learn library.<br><br>
-				<a class="button  is-striped " href=/#/about>More About me...</a>
 				</p>
 				<div class="social-icons">
 					<div class="wrapper">
