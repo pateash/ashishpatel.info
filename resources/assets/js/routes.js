@@ -30,6 +30,21 @@ let routes=[
         path:"/projects/bigquery",
         component:require("./views/projects/bigquery.vue")
     },
+    {
+        path:"/projects/grabpustak",
+        component:require("./views/projects/grabpustak.vue")
+    },
+    {
+        path:"/projects/manitmoodle",
+        component:require("./views/projects/manitmoodle.vue")
+    },
+    {
+        path:"/projects/captcha",
+        component:require("./views/projects/captcha.vue")
+    },
+
+
+
 ]
 
 export default new VueRouter({

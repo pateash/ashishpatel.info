@@ -18,17 +18,17 @@
         </div>
         @include("layouts.nav")
         <div class="social-icons">
-            <a href=https://linkedin.com/in/ashishpatel0720 style="color:#006699"><i class="fa fa-linkedin-square fa-2x"></i></a>
-            <a href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-2x"></i></a>
-            <a href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-2x"></i></a>
-            <a href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-2x"></i></a>
-            <a href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-2x"></i></a>
-            <a href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-2x"></i></a>
-            <a href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-2x"></i></a>
+            <a target='_blank' href=https://linkedin.com/in/ashishpatel0720 style="color:#006699"><i class="fa fa-linkedin-square fa-2x"></i></a>
+            <a target='_blank' href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-2x"></i></a>
+            <a target='_blank' href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-2x"></i></a>
+            <a target='_blank' href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-2x"></i></a>
+            <a target='_blank' href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-2x"></i></a>
+            <a target='_blank' href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-2x"></i></a>
+            <a target='_blank' href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-2x"></i></a>
 
-            <p><span class="icon"><i class="fa fa-code"></i></span> by <b><a href="//github.com/ashishpatel0720"
-                                                                              style="color:#ff7018">Ashish</a></b> in <span class="icon"><i class="fa fa-heart" style="color:#ff4d44"></i></span> with <br><a href="//laravel.com"><img src="/images/laravel-icon.png" ></a> <a href="//vuejs.org"><img src="/images/vue-icon.png"></a>.</p>
-            <p>Copyright &copy; 2017 <a href="//github.com/ashishpatel0720" >@ashishpatel0720</a> </p>
+            <p><span class="icon"><i class="fa fa-code"></i></span> by <b><a target='_blank' href="//github.com/ashishpatel0720"
+                                                                              style="color:#ff7018">Ashish</a></b> in <span class="icon"><i class="fa fa-heart" style="color:#ff4d44"></i></span> with <br><a target='_blank' href="//laravel.com"><img src="/images/laravel-icon.png" ></a> <a target='_blank' href="//vuejs.org"><img src="/images/vue-icon.png"></a>.</p>
+            <p>Copyright &copy; 2017 <a target='_blank' href="//github.com/ashishpatel0720" >@ashishpatel0720</a> </p>
         </div>
     </header>
     <div class="wrapper">
@@ -44,7 +44,7 @@
                 <h4>Skills</h4>
                 <div class="row items owl-carousel" id="owl-toolbox" >
                     <img src="images/logo1.png" class="img-responsive" alt="" >
-                    <img src="images/logo2.png" class="img-responsive" alt="">
+                    <img src="images/logo2.png" title='VueJS' class="img-responsive" alt="">
                     <img src="images/logo3.svg" class="img-responsive" alt="">
                     <img src="images/logo4.png" class="img-responsive" alt="">
                     <img src="images/logo5.png" class="img-responsive" alt="">
