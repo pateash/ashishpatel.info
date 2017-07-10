@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 172);
+/******/ 	return __webpack_require__(__webpack_require__.s = 207);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1899,7 +1899,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(159)("./" + name);
+            __webpack_require__(174)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4534,7 +4534,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(171)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(206)(module)))
 
 /***/ }),
 /* 1 */
@@ -4543,7 +4543,7 @@ return hooks;
 "use strict";
 
 
-var bind = __webpack_require__(8);
+var bind = __webpack_require__(10);
 
 /*global toString:true*/
 
@@ -4901,13 +4901,290 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function() {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		var result = [];
+		for(var i = 0; i < this.length; i++) {
+			var item = this[i];
+			if(item[2]) {
+				result.push("@media " + item[2] + "{" + item[1] + "}");
+			} else {
+				result.push(item[1]);
+			}
+		}
+		return result.join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Author Tobias Koppers @sokra
+  Modified by Evan You @yyx990803
+*/
+
+var hasDocument = typeof document !== 'undefined'
+
+if (typeof DEBUG !== 'undefined' && DEBUG) {
+  if (!hasDocument) {
+    throw new Error(
+    'vue-style-loader cannot be used in a non-browser environment. ' +
+    "Use { target: 'node' } in your Webpack config to indicate a server-rendering environment."
+  ) }
+}
+
+var listToStyles = __webpack_require__(203)
+
+/*
+type StyleObject = {
+  id: number;
+  parts: Array<StyleObjectPart>
+}
+
+type StyleObjectPart = {
+  css: string;
+  media: string;
+  sourceMap: ?string
+}
+*/
+
+var stylesInDom = {/*
+  [id: number]: {
+    id: number,
+    refs: number,
+    parts: Array<(obj?: StyleObjectPart) => void>
+  }
+*/}
+
+var head = hasDocument && (document.head || document.getElementsByTagName('head')[0])
+var singletonElement = null
+var singletonCounter = 0
+var isProduction = false
+var noop = function () {}
+
+// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+// tags it will allow on a page
+var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\b/.test(navigator.userAgent.toLowerCase())
+
+module.exports = function (parentId, list, _isProduction) {
+  isProduction = _isProduction
+
+  var styles = listToStyles(parentId, list)
+  addStylesToDom(styles)
+
+  return function update (newList) {
+    var mayRemove = []
+    for (var i = 0; i < styles.length; i++) {
+      var item = styles[i]
+      var domStyle = stylesInDom[item.id]
+      domStyle.refs--
+      mayRemove.push(domStyle)
+    }
+    if (newList) {
+      styles = listToStyles(parentId, newList)
+      addStylesToDom(styles)
+    } else {
+      styles = []
+    }
+    for (var i = 0; i < mayRemove.length; i++) {
+      var domStyle = mayRemove[i]
+      if (domStyle.refs === 0) {
+        for (var j = 0; j < domStyle.parts.length; j++) {
+          domStyle.parts[j]()
+        }
+        delete stylesInDom[domStyle.id]
+      }
+    }
+  }
+}
+
+function addStylesToDom (styles /* Array<StyleObject> */) {
+  for (var i = 0; i < styles.length; i++) {
+    var item = styles[i]
+    var domStyle = stylesInDom[item.id]
+    if (domStyle) {
+      domStyle.refs++
+      for (var j = 0; j < domStyle.parts.length; j++) {
+        domStyle.parts[j](item.parts[j])
+      }
+      for (; j < item.parts.length; j++) {
+        domStyle.parts.push(addStyle(item.parts[j]))
+      }
+      if (domStyle.parts.length > item.parts.length) {
+        domStyle.parts.length = item.parts.length
+      }
+    } else {
+      var parts = []
+      for (var j = 0; j < item.parts.length; j++) {
+        parts.push(addStyle(item.parts[j]))
+      }
+      stylesInDom[item.id] = { id: item.id, refs: 1, parts: parts }
+    }
+  }
+}
+
+function createStyleElement () {
+  var styleElement = document.createElement('style')
+  styleElement.type = 'text/css'
+  head.appendChild(styleElement)
+  return styleElement
+}
+
+function addStyle (obj /* StyleObjectPart */) {
+  var update, remove
+  var styleElement = document.querySelector('style[data-vue-ssr-id~="' + obj.id + '"]')
+
+  if (styleElement) {
+    if (isProduction) {
+      // has SSR styles and in production mode.
+      // simply do nothing.
+      return noop
+    } else {
+      // has SSR styles but in dev mode.
+      // for some reason Chrome can't handle source map in server-rendered
+      // style tags - source maps in <style> only works if the style tag is
+      // created and inserted dynamically. So we remove the server rendered
+      // styles and inject new ones.
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  if (isOldIE) {
+    // use singleton mode for IE9.
+    var styleIndex = singletonCounter++
+    styleElement = singletonElement || (singletonElement = createStyleElement())
+    update = applyToSingletonTag.bind(null, styleElement, styleIndex, false)
+    remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true)
+  } else {
+    // use multi-style-tag mode in all other cases
+    styleElement = createStyleElement()
+    update = applyToTag.bind(null, styleElement)
+    remove = function () {
+      styleElement.parentNode.removeChild(styleElement)
+    }
+  }
+
+  update(obj)
+
+  return function updateStyle (newObj /* StyleObjectPart */) {
+    if (newObj) {
+      if (newObj.css === obj.css &&
+          newObj.media === obj.media &&
+          newObj.sourceMap === obj.sourceMap) {
+        return
+      }
+      update(obj = newObj)
+    } else {
+      remove()
+    }
+  }
+}
+
+var replaceText = (function () {
+  var textStore = []
+
+  return function (index, replacement) {
+    textStore[index] = replacement
+    return textStore.filter(Boolean).join('\n')
+  }
+})()
+
+function applyToSingletonTag (styleElement, index, remove, obj) {
+  var css = remove ? '' : obj.css
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = replaceText(index, css)
+  } else {
+    var cssNode = document.createTextNode(css)
+    var childNodes = styleElement.childNodes
+    if (childNodes[index]) styleElement.removeChild(childNodes[index])
+    if (childNodes.length) {
+      styleElement.insertBefore(cssNode, childNodes[index])
+    } else {
+      styleElement.appendChild(cssNode)
+    }
+  }
+}
+
+function applyToTag (styleElement, obj) {
+  var css = obj.css
+  var media = obj.media
+  var sourceMap = obj.sourceMap
+
+  if (media) {
+    styleElement.setAttribute('media', media)
+  }
+
+  if (sourceMap) {
+    // https://developer.chrome.com/devtools/docs/javascript-debugging
+    // this makes source maps inside style tags work properly in Chrome
+    css += '\n/*# sourceURL=' + sourceMap.sources[0] + ' */'
+    // http://stackoverflow.com/a/26603875
+    css += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + ' */'
+  }
+
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild)
+    }
+    styleElement.appendChild(document.createTextNode(css))
+  }
+}
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(142);
+var normalizeHeaderName = __webpack_require__(144);
 
 var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 var DEFAULT_CONTENT_TYPE = {
@@ -4924,10 +5201,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(4);
+    adapter = __webpack_require__(6);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(4);
+    adapter = __webpack_require__(6);
   }
   return adapter;
 }
@@ -4998,22 +5275,22 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(160)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175)))
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var settle = __webpack_require__(134);
-var buildURL = __webpack_require__(137);
-var parseHeaders = __webpack_require__(143);
-var isURLSameOrigin = __webpack_require__(141);
-var createError = __webpack_require__(7);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(136);
+var settle = __webpack_require__(136);
+var buildURL = __webpack_require__(139);
+var parseHeaders = __webpack_require__(145);
+var isURLSameOrigin = __webpack_require__(143);
+var createError = __webpack_require__(9);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(138);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -5109,7 +5386,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(139);
+      var cookies = __webpack_require__(141);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -5185,7 +5462,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5211,7 +5488,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5223,13 +5500,13 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(133);
+var enhanceError = __webpack_require__(135);
 
 /**
  * Create an Error with the specified message, config, error code, and response.
@@ -5247,7 +5524,7 @@ module.exports = function createError(message, config, code, response) {
 
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5265,7 +5542,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5343,7 +5620,7 @@ return af;
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5407,7 +5684,7 @@ return arDz;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5471,7 +5748,7 @@ return arKw;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5602,7 +5879,7 @@ return arLy;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5667,7 +5944,7 @@ return arMa;
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5777,7 +6054,7 @@ return arSa;
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5841,7 +6118,7 @@ return arTn;
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5988,7 +6265,7 @@ return ar;
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6098,7 +6375,7 @@ return az;
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6237,7 +6514,7 @@ return be;
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6332,7 +6609,7 @@ return bg;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6456,7 +6733,7 @@ return bn;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6580,7 +6857,7 @@ return bo;
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6693,7 +6970,7 @@ return br;
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6841,7 +7118,7 @@ return bs;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6934,7 +7211,7 @@ return ca;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7111,7 +7388,7 @@ return cs;
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7179,7 +7456,7 @@ return cv;
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7265,7 +7542,7 @@ return cy;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7330,7 +7607,7 @@ return da;
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7414,7 +7691,7 @@ return deAt;
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7497,7 +7774,7 @@ return deCh;
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7580,7 +7857,7 @@ return de;
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7685,7 +7962,7 @@ return dv;
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7790,7 +8067,7 @@ return el;
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7862,7 +8139,7 @@ return enAu;
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7930,7 +8207,7 @@ return enCa;
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8002,7 +8279,7 @@ return enGb;
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8074,7 +8351,7 @@ return enIe;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8146,7 +8423,7 @@ return enNz;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8224,7 +8501,7 @@ return eo;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8311,7 +8588,7 @@ return esDo;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8399,7 +8676,7 @@ return es;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8484,7 +8761,7 @@ return et;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8555,7 +8832,7 @@ return eu;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8667,7 +8944,7 @@ return fa;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8779,7 +9056,7 @@ return fi;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8844,7 +9121,7 @@ return fo;
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8923,7 +9200,7 @@ return frCa;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9006,7 +9283,7 @@ return frCh;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9094,7 +9371,7 @@ return fr;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9174,7 +9451,7 @@ return fy;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9255,7 +9532,7 @@ return gd;
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9337,7 +9614,7 @@ return gl;
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9464,7 +9741,7 @@ return gomLatn;
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9568,7 +9845,7 @@ return he;
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9697,7 +9974,7 @@ return hi;
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9847,7 +10124,7 @@ return hr;
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9961,7 +10238,7 @@ return hu;
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10061,7 +10338,7 @@ return hyAm;
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10149,7 +10426,7 @@ return id;
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10281,7 +10558,7 @@ return is;
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10356,7 +10633,7 @@ return it;
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10441,7 +10718,7 @@ return ja;
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10529,7 +10806,7 @@ return jv;
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10623,7 +10900,7 @@ return ka;
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10715,7 +10992,7 @@ return kk;
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10778,7 +11055,7 @@ return km;
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10909,7 +11186,7 @@ return kn;
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10983,7 +11260,7 @@ return ko;
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11076,7 +11353,7 @@ return ky;
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11218,7 +11495,7 @@ return lb;
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11293,7 +11570,7 @@ return lo;
 
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11415,7 +11692,7 @@ return lt;
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11517,7 +11794,7 @@ return lv;
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11633,7 +11910,7 @@ return me;
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11702,7 +11979,7 @@ return mi;
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11797,7 +12074,7 @@ return mk;
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11883,7 +12160,7 @@ return ml;
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12047,7 +12324,7 @@ return mr;
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12135,7 +12412,7 @@ return msMy;
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12222,7 +12499,7 @@ return ms;
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12323,7 +12600,7 @@ return my;
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12391,7 +12668,7 @@ return nb;
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12519,7 +12796,7 @@ return ne;
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12612,7 +12889,7 @@ return nlBe;
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12705,7 +12982,7 @@ return nl;
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12770,7 +13047,7 @@ return nn;
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12899,7 +13176,7 @@ return paIn;
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13011,7 +13288,7 @@ return pl;
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13077,7 +13354,7 @@ return ptBr;
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13147,7 +13424,7 @@ return pt;
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13227,7 +13504,7 @@ return ro;
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13415,7 +13692,7 @@ return ru;
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13518,7 +13795,7 @@ return sd;
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13584,7 +13861,7 @@ return se;
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13660,7 +13937,7 @@ return si;
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13815,7 +14092,7 @@ return sk;
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13982,7 +14259,7 @@ return sl;
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14057,7 +14334,7 @@ return sq;
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14172,7 +14449,7 @@ return srCyrl;
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14287,7 +14564,7 @@ return sr;
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14381,7 +14658,7 @@ return ss;
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14455,7 +14732,7 @@ return sv;
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14519,7 +14796,7 @@ return sw;
 
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14654,7 +14931,7 @@ return ta;
 
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14748,7 +15025,7 @@ return te;
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14821,7 +15098,7 @@ return tet;
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14893,7 +15170,7 @@ return th;
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14960,7 +15237,7 @@ return tlPh;
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15085,7 +15362,7 @@ return tlh;
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15180,7 +15457,7 @@ return tr;
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15276,7 +15553,7 @@ return tzl;
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15339,7 +15616,7 @@ return tzmLatn;
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15402,7 +15679,7 @@ return tzm;
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15558,7 +15835,7 @@ return uk;
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15662,7 +15939,7 @@ return ur;
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15725,7 +16002,7 @@ return uzLatn;
 
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15788,7 +16065,7 @@ return uz;
 
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15872,7 +16149,7 @@ return vi;
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15945,7 +16222,7 @@ return xPseudo;
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16010,7 +16287,7 @@ return yo;
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16126,7 +16403,7 @@ return zhCn;
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16236,7 +16513,7 @@ return zhHk;
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16345,7 +16622,7 @@ return zhTw;
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18852,12 +19129,12 @@ if (inBrowser && window.Vue) {
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__routes__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__routes__ = __webpack_require__(158);
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -18865,7 +19142,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(149);
+__webpack_require__(157);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -18880,29 +19157,33 @@ var app = new Vue({
   router: __WEBPACK_IMPORTED_MODULE_0__routes__["a" /* default */]
 });
 
+window.addEventListener('popstate', function () {
+  app.currentRoute = window.location.pathname;
+});
+
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(128);
+module.exports = __webpack_require__(130);
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var bind = __webpack_require__(8);
-var Axios = __webpack_require__(130);
-var defaults = __webpack_require__(3);
+var bind = __webpack_require__(10);
+var Axios = __webpack_require__(132);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -18935,15 +19216,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(5);
-axios.CancelToken = __webpack_require__(129);
-axios.isCancel = __webpack_require__(6);
+axios.Cancel = __webpack_require__(7);
+axios.CancelToken = __webpack_require__(131);
+axios.isCancel = __webpack_require__(8);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(144);
+axios.spread = __webpack_require__(146);
 
 module.exports = axios;
 
@@ -18952,13 +19233,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(5);
+var Cancel = __webpack_require__(7);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -19016,18 +19297,18 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(1);
-var InterceptorManager = __webpack_require__(131);
-var dispatchRequest = __webpack_require__(132);
-var isAbsoluteURL = __webpack_require__(140);
-var combineURLs = __webpack_require__(138);
+var InterceptorManager = __webpack_require__(133);
+var dispatchRequest = __webpack_require__(134);
+var isAbsoluteURL = __webpack_require__(142);
+var combineURLs = __webpack_require__(140);
 
 /**
  * Create a new instance of Axios
@@ -19108,7 +19389,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19167,16 +19448,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var transformData = __webpack_require__(135);
-var isCancel = __webpack_require__(6);
-var defaults = __webpack_require__(3);
+var transformData = __webpack_require__(137);
+var isCancel = __webpack_require__(8);
+var defaults = __webpack_require__(5);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -19253,7 +19534,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19279,13 +19560,13 @@ module.exports = function enhanceError(error, config, code, response) {
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(7);
+var createError = __webpack_require__(9);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -19311,7 +19592,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19338,7 +19619,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19381,7 +19662,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19456,7 +19737,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19475,7 +19756,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19535,7 +19816,7 @@ module.exports = (
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19556,7 +19837,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19631,7 +19912,7 @@ module.exports = (
 
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19650,7 +19931,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19694,7 +19975,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19728,117 +20009,11 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 145 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
-/* 146 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
 /* 147 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -19866,6 +20041,70 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({});
 
@@ -19875,21 +20114,793 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__scripts_bootstrap_min__ = __webpack_require__(152);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 150 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 151 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 152 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 153 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 154 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 155 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 156 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+/* 157 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__scripts_bootstrap_min__ = __webpack_require__(160);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__scripts_bootstrap_min___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__scripts_bootstrap_min__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scripts_SmoothScroll__ = __webpack_require__(151);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scripts_SmoothScroll__ = __webpack_require__(159);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scripts_SmoothScroll___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__scripts_SmoothScroll__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__scripts_isotope_pkgd_min__ = __webpack_require__(153);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__scripts_isotope_pkgd_min__ = __webpack_require__(161);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__scripts_isotope_pkgd_min___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__scripts_isotope_pkgd_min__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scripts_theia_sticky_sidebar__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scripts_theia_sticky_sidebar__ = __webpack_require__(165);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__scripts_theia_sticky_sidebar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__scripts_theia_sticky_sidebar__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scripts_jquery_slicknav__ = __webpack_require__(154);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scripts_jquery_slicknav__ = __webpack_require__(162);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scripts_jquery_slicknav___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__scripts_jquery_slicknav__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__scripts_owl_carousel__ = __webpack_require__(156);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__scripts_owl_carousel__ = __webpack_require__(164);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__scripts_owl_carousel___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__scripts_owl_carousel__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__scripts_main__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__scripts_main__ = __webpack_require__(163);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__scripts_main___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__scripts_main__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_vue_router__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_vue_router__ = __webpack_require__(126);
 // import jQuery from "jquery"  TODO:(ashishpatel0720) why this not working and we have to use cdn
 //window.jQuery=jQuery
 
@@ -19902,9 +20913,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-window.Vue = __webpack_require__(169);
+window.Vue = __webpack_require__(204);
 
-window.axios = __webpack_require__(127);
+window.axios = __webpack_require__(129);
 
 window.moment = __webpack_require__(0);
 
@@ -19922,26 +20933,44 @@ if (token) {
 }
 
 /***/ }),
-/* 150 */
+/* 158 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(126);
 
 
 
 var routes = [{
     path: "/",
-    component: __webpack_require__(163)
+    component: __webpack_require__(178)
 }, {
-    path: "/about",
-    component: __webpack_require__(161)
+    path: "/education",
+    component: __webpack_require__(177)
 }, {
-    path: "/projects",
-    component: __webpack_require__(164)
+    path: "/work",
+    component: __webpack_require__(185)
 }, {
     path: "/contact",
-    component: __webpack_require__(162)
+    component: __webpack_require__(176)
+}, {
+    path: "/projects",
+    component: __webpack_require__(179)
+}, {
+    path: "/projects/kisanmitra",
+    component: __webpack_require__(183)
+}, {
+    path: "/projects/bigquery",
+    component: __webpack_require__(180)
+}, {
+    path: "/projects/grabpustak",
+    component: __webpack_require__(182)
+}, {
+    path: "/projects/manitmoodle",
+    component: __webpack_require__(184)
+}, {
+    path: "/projects/captcha",
+    component: __webpack_require__(181)
 }];
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
@@ -19950,7 +20979,7 @@ var routes = [{
 }));
 
 /***/ }),
-/* 151 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -20667,7 +21696,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && 
 })();
 
 /***/ }),
-/* 152 */
+/* 160 */
 /***/ (function(module, exports) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21254,7 +22283,7 @@ if ("undefined" == typeof jQuery) throw new Error("Bootstrap's JavaScript requir
 }(jQuery);
 
 /***/ }),
-/* 153 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_1__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_LOCAL_MODULE_2__;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_3__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_LOCAL_MODULE_4__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_5__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_LOCAL_MODULE_6__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_7__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_8__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_9__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_10__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_11__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_LOCAL_MODULE_12__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21271,7 +22300,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AM
 
 !function (t, e) {
   "use strict";
-   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(158)], __WEBPACK_AMD_DEFINE_RESULT__ = function (i) {
+   true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(173)], __WEBPACK_AMD_DEFINE_RESULT__ = function (i) {
     e(t, i);
   }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) && module.exports ? module.exports = e(t, require("jquery")) : t.jQueryBridget = e(t, t.jQuery);
@@ -22094,7 +23123,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var __WEBPACK_AM
 });
 
 /***/ }),
-/* 154 */
+/* 162 */
 /***/ (function(module, exports) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -22200,11 +23229,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 }(jQuery, document, window);
 
 /***/ }),
-/* 155 */
+/* 163 */
 /***/ (function(module, exports) {
 
-$(document).ready(function () {
 
+//TODO: why icons/images not showing when we navigate to other route and come back
+//binding event on button clicks so we do not get problem
+
+$(document).on('ready click', function (evt) {
+    evt.stopPropagation();
     document.addEventListener("touchstart", function () {}, !0);
     $(".fixed-single-content .items").theiaStickySidebar({
         additionalMarginTop: 30
@@ -22248,23 +23281,23 @@ $(document).ready(function () {
     });
 
     $("#owl-toolbox").owlCarousel({
-        items: 6,
+        items: 5, //items to be seen once, others will be seen using courosel
         autoPlay: true,
         navigation: false,
         pagination: false,
         paginationNumbers: false,
         responsive: true,
-        responsiveRefreshRate: 200,
+        responsiveRefreshRate: 50,
         responsiveBaseWidth: window,
         baseClass: "owl-carousel",
         theme: "owl-theme",
-        lazyLoad: false,
+        lazyLoad: true,
         lazyFollow: true,
         lazyEffect: "fade"
     });
     //added by ashishpatel0720
     $("#owl-social-icons").owlCarousel({
-        items: 6,
+        items: 5,
         autoPlay: true,
         navigation: false,
         pagination: false,
@@ -22274,10 +23307,11 @@ $(document).ready(function () {
         responsiveBaseWidth: window,
         baseClass: "owl-carousel",
         theme: "owl-theme",
-        lazyLoad: false,
+        lazyLoad: true,
         lazyFollow: true,
         lazyEffect: "fade"
     });
+
     $(window).load(function () {
         var $menu = $('header ul'),
             $menuTrigger = $('.menu-item-has-children > a');
@@ -22288,12 +23322,28 @@ $(document).ready(function () {
             $this.toggleClass("active").next('ul').slideToggle("fast");
         });
     });
-
+    console.clear();
     $("#menu").slicknav();
+
+    // TODO: fix error -> nav do not automatically fixed
+    // target=evt.target;
+    // ts=$('a[role="menuitem"]');
+    // var flag=false;
+    // for(t in ts) {
+    //     console.error("targets-> " + t);
+    //     if (t == target) {
+    //         flag = true;
+    //         break;
+    //     }
+    // }
+    // if(flag)
+    // $(".slicknav_icon-bar").click();
+    // else console.error("target-"+target),console.error("targets-"+$('a[role="menuitem"]'));
+
 });
 
 /***/ }),
-/* 156 */
+/* 164 */
 /***/ (function(module, exports) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -23792,7 +24842,7 @@ if (typeof Object.create !== "function") {
 })(jQuery, window, document);
 
 /***/ }),
-/* 157 */
+/* 165 */
 /***/ (function(module, exports) {
 
 /*!
@@ -24115,7 +25165,56 @@ if (typeof Object.create !== "function") {
 })(jQuery);
 
 /***/ }),
-/* 158 */
+/* 166 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n<!--adding top margin for all h4 elements in this page-->\n\nh4{\n    margin-top:2em;\n}\n", ""]);
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+/***/ }),
+/* 168 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n<!--adding top margin for all h4 elements in this page-->\n\nh4{\n    margin-top:2em;\n}\n", ""]);
+
+/***/ }),
+/* 169 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+/***/ }),
+/* 170 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n<!--adding top margin for all h4 elements in this page-->\n\nh4{\n    margin-top:2em;\n}\n", ""]);
+
+/***/ }),
+/* 171 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n<!--adding top margin for all h4 elements in this page-->\n\nh4{\n    margin-top:2em;\n}\n", ""]);
+
+/***/ }),
+/* 172 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)();
+exports.push([module.i, "\n<!--adding top margin for all h4 elements in this page-->\n\nh4{\n    margin-top:2em;\n}\n", ""]);
+
+/***/ }),
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -34375,240 +35474,240 @@ return jQuery;
 
 
 /***/ }),
-/* 159 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 9,
-	"./af.js": 9,
-	"./ar": 16,
-	"./ar-dz": 10,
-	"./ar-dz.js": 10,
-	"./ar-kw": 11,
-	"./ar-kw.js": 11,
-	"./ar-ly": 12,
-	"./ar-ly.js": 12,
-	"./ar-ma": 13,
-	"./ar-ma.js": 13,
-	"./ar-sa": 14,
-	"./ar-sa.js": 14,
-	"./ar-tn": 15,
-	"./ar-tn.js": 15,
-	"./ar.js": 16,
-	"./az": 17,
-	"./az.js": 17,
-	"./be": 18,
-	"./be.js": 18,
-	"./bg": 19,
-	"./bg.js": 19,
-	"./bn": 20,
-	"./bn.js": 20,
-	"./bo": 21,
-	"./bo.js": 21,
-	"./br": 22,
-	"./br.js": 22,
-	"./bs": 23,
-	"./bs.js": 23,
-	"./ca": 24,
-	"./ca.js": 24,
-	"./cs": 25,
-	"./cs.js": 25,
-	"./cv": 26,
-	"./cv.js": 26,
-	"./cy": 27,
-	"./cy.js": 27,
-	"./da": 28,
-	"./da.js": 28,
-	"./de": 31,
-	"./de-at": 29,
-	"./de-at.js": 29,
-	"./de-ch": 30,
-	"./de-ch.js": 30,
-	"./de.js": 31,
-	"./dv": 32,
-	"./dv.js": 32,
-	"./el": 33,
-	"./el.js": 33,
-	"./en-au": 34,
-	"./en-au.js": 34,
-	"./en-ca": 35,
-	"./en-ca.js": 35,
-	"./en-gb": 36,
-	"./en-gb.js": 36,
-	"./en-ie": 37,
-	"./en-ie.js": 37,
-	"./en-nz": 38,
-	"./en-nz.js": 38,
-	"./eo": 39,
-	"./eo.js": 39,
-	"./es": 41,
-	"./es-do": 40,
-	"./es-do.js": 40,
-	"./es.js": 41,
-	"./et": 42,
-	"./et.js": 42,
-	"./eu": 43,
-	"./eu.js": 43,
-	"./fa": 44,
-	"./fa.js": 44,
-	"./fi": 45,
-	"./fi.js": 45,
-	"./fo": 46,
-	"./fo.js": 46,
-	"./fr": 49,
-	"./fr-ca": 47,
-	"./fr-ca.js": 47,
-	"./fr-ch": 48,
-	"./fr-ch.js": 48,
-	"./fr.js": 49,
-	"./fy": 50,
-	"./fy.js": 50,
-	"./gd": 51,
-	"./gd.js": 51,
-	"./gl": 52,
-	"./gl.js": 52,
-	"./gom-latn": 53,
-	"./gom-latn.js": 53,
-	"./he": 54,
-	"./he.js": 54,
-	"./hi": 55,
-	"./hi.js": 55,
-	"./hr": 56,
-	"./hr.js": 56,
-	"./hu": 57,
-	"./hu.js": 57,
-	"./hy-am": 58,
-	"./hy-am.js": 58,
-	"./id": 59,
-	"./id.js": 59,
-	"./is": 60,
-	"./is.js": 60,
-	"./it": 61,
-	"./it.js": 61,
-	"./ja": 62,
-	"./ja.js": 62,
-	"./jv": 63,
-	"./jv.js": 63,
-	"./ka": 64,
-	"./ka.js": 64,
-	"./kk": 65,
-	"./kk.js": 65,
-	"./km": 66,
-	"./km.js": 66,
-	"./kn": 67,
-	"./kn.js": 67,
-	"./ko": 68,
-	"./ko.js": 68,
-	"./ky": 69,
-	"./ky.js": 69,
-	"./lb": 70,
-	"./lb.js": 70,
-	"./lo": 71,
-	"./lo.js": 71,
-	"./lt": 72,
-	"./lt.js": 72,
-	"./lv": 73,
-	"./lv.js": 73,
-	"./me": 74,
-	"./me.js": 74,
-	"./mi": 75,
-	"./mi.js": 75,
-	"./mk": 76,
-	"./mk.js": 76,
-	"./ml": 77,
-	"./ml.js": 77,
-	"./mr": 78,
-	"./mr.js": 78,
-	"./ms": 80,
-	"./ms-my": 79,
-	"./ms-my.js": 79,
-	"./ms.js": 80,
-	"./my": 81,
-	"./my.js": 81,
-	"./nb": 82,
-	"./nb.js": 82,
-	"./ne": 83,
-	"./ne.js": 83,
-	"./nl": 85,
-	"./nl-be": 84,
-	"./nl-be.js": 84,
-	"./nl.js": 85,
-	"./nn": 86,
-	"./nn.js": 86,
-	"./pa-in": 87,
-	"./pa-in.js": 87,
-	"./pl": 88,
-	"./pl.js": 88,
-	"./pt": 90,
-	"./pt-br": 89,
-	"./pt-br.js": 89,
-	"./pt.js": 90,
-	"./ro": 91,
-	"./ro.js": 91,
-	"./ru": 92,
-	"./ru.js": 92,
-	"./sd": 93,
-	"./sd.js": 93,
-	"./se": 94,
-	"./se.js": 94,
-	"./si": 95,
-	"./si.js": 95,
-	"./sk": 96,
-	"./sk.js": 96,
-	"./sl": 97,
-	"./sl.js": 97,
-	"./sq": 98,
-	"./sq.js": 98,
-	"./sr": 100,
-	"./sr-cyrl": 99,
-	"./sr-cyrl.js": 99,
-	"./sr.js": 100,
-	"./ss": 101,
-	"./ss.js": 101,
-	"./sv": 102,
-	"./sv.js": 102,
-	"./sw": 103,
-	"./sw.js": 103,
-	"./ta": 104,
-	"./ta.js": 104,
-	"./te": 105,
-	"./te.js": 105,
-	"./tet": 106,
-	"./tet.js": 106,
-	"./th": 107,
-	"./th.js": 107,
-	"./tl-ph": 108,
-	"./tl-ph.js": 108,
-	"./tlh": 109,
-	"./tlh.js": 109,
-	"./tr": 110,
-	"./tr.js": 110,
-	"./tzl": 111,
-	"./tzl.js": 111,
-	"./tzm": 113,
-	"./tzm-latn": 112,
-	"./tzm-latn.js": 112,
-	"./tzm.js": 113,
-	"./uk": 114,
-	"./uk.js": 114,
-	"./ur": 115,
-	"./ur.js": 115,
-	"./uz": 117,
-	"./uz-latn": 116,
-	"./uz-latn.js": 116,
-	"./uz.js": 117,
-	"./vi": 118,
-	"./vi.js": 118,
-	"./x-pseudo": 119,
-	"./x-pseudo.js": 119,
-	"./yo": 120,
-	"./yo.js": 120,
-	"./zh-cn": 121,
-	"./zh-cn.js": 121,
-	"./zh-hk": 122,
-	"./zh-hk.js": 122,
-	"./zh-tw": 123,
-	"./zh-tw.js": 123
+	"./af": 11,
+	"./af.js": 11,
+	"./ar": 18,
+	"./ar-dz": 12,
+	"./ar-dz.js": 12,
+	"./ar-kw": 13,
+	"./ar-kw.js": 13,
+	"./ar-ly": 14,
+	"./ar-ly.js": 14,
+	"./ar-ma": 15,
+	"./ar-ma.js": 15,
+	"./ar-sa": 16,
+	"./ar-sa.js": 16,
+	"./ar-tn": 17,
+	"./ar-tn.js": 17,
+	"./ar.js": 18,
+	"./az": 19,
+	"./az.js": 19,
+	"./be": 20,
+	"./be.js": 20,
+	"./bg": 21,
+	"./bg.js": 21,
+	"./bn": 22,
+	"./bn.js": 22,
+	"./bo": 23,
+	"./bo.js": 23,
+	"./br": 24,
+	"./br.js": 24,
+	"./bs": 25,
+	"./bs.js": 25,
+	"./ca": 26,
+	"./ca.js": 26,
+	"./cs": 27,
+	"./cs.js": 27,
+	"./cv": 28,
+	"./cv.js": 28,
+	"./cy": 29,
+	"./cy.js": 29,
+	"./da": 30,
+	"./da.js": 30,
+	"./de": 33,
+	"./de-at": 31,
+	"./de-at.js": 31,
+	"./de-ch": 32,
+	"./de-ch.js": 32,
+	"./de.js": 33,
+	"./dv": 34,
+	"./dv.js": 34,
+	"./el": 35,
+	"./el.js": 35,
+	"./en-au": 36,
+	"./en-au.js": 36,
+	"./en-ca": 37,
+	"./en-ca.js": 37,
+	"./en-gb": 38,
+	"./en-gb.js": 38,
+	"./en-ie": 39,
+	"./en-ie.js": 39,
+	"./en-nz": 40,
+	"./en-nz.js": 40,
+	"./eo": 41,
+	"./eo.js": 41,
+	"./es": 43,
+	"./es-do": 42,
+	"./es-do.js": 42,
+	"./es.js": 43,
+	"./et": 44,
+	"./et.js": 44,
+	"./eu": 45,
+	"./eu.js": 45,
+	"./fa": 46,
+	"./fa.js": 46,
+	"./fi": 47,
+	"./fi.js": 47,
+	"./fo": 48,
+	"./fo.js": 48,
+	"./fr": 51,
+	"./fr-ca": 49,
+	"./fr-ca.js": 49,
+	"./fr-ch": 50,
+	"./fr-ch.js": 50,
+	"./fr.js": 51,
+	"./fy": 52,
+	"./fy.js": 52,
+	"./gd": 53,
+	"./gd.js": 53,
+	"./gl": 54,
+	"./gl.js": 54,
+	"./gom-latn": 55,
+	"./gom-latn.js": 55,
+	"./he": 56,
+	"./he.js": 56,
+	"./hi": 57,
+	"./hi.js": 57,
+	"./hr": 58,
+	"./hr.js": 58,
+	"./hu": 59,
+	"./hu.js": 59,
+	"./hy-am": 60,
+	"./hy-am.js": 60,
+	"./id": 61,
+	"./id.js": 61,
+	"./is": 62,
+	"./is.js": 62,
+	"./it": 63,
+	"./it.js": 63,
+	"./ja": 64,
+	"./ja.js": 64,
+	"./jv": 65,
+	"./jv.js": 65,
+	"./ka": 66,
+	"./ka.js": 66,
+	"./kk": 67,
+	"./kk.js": 67,
+	"./km": 68,
+	"./km.js": 68,
+	"./kn": 69,
+	"./kn.js": 69,
+	"./ko": 70,
+	"./ko.js": 70,
+	"./ky": 71,
+	"./ky.js": 71,
+	"./lb": 72,
+	"./lb.js": 72,
+	"./lo": 73,
+	"./lo.js": 73,
+	"./lt": 74,
+	"./lt.js": 74,
+	"./lv": 75,
+	"./lv.js": 75,
+	"./me": 76,
+	"./me.js": 76,
+	"./mi": 77,
+	"./mi.js": 77,
+	"./mk": 78,
+	"./mk.js": 78,
+	"./ml": 79,
+	"./ml.js": 79,
+	"./mr": 80,
+	"./mr.js": 80,
+	"./ms": 82,
+	"./ms-my": 81,
+	"./ms-my.js": 81,
+	"./ms.js": 82,
+	"./my": 83,
+	"./my.js": 83,
+	"./nb": 84,
+	"./nb.js": 84,
+	"./ne": 85,
+	"./ne.js": 85,
+	"./nl": 87,
+	"./nl-be": 86,
+	"./nl-be.js": 86,
+	"./nl.js": 87,
+	"./nn": 88,
+	"./nn.js": 88,
+	"./pa-in": 89,
+	"./pa-in.js": 89,
+	"./pl": 90,
+	"./pl.js": 90,
+	"./pt": 92,
+	"./pt-br": 91,
+	"./pt-br.js": 91,
+	"./pt.js": 92,
+	"./ro": 93,
+	"./ro.js": 93,
+	"./ru": 94,
+	"./ru.js": 94,
+	"./sd": 95,
+	"./sd.js": 95,
+	"./se": 96,
+	"./se.js": 96,
+	"./si": 97,
+	"./si.js": 97,
+	"./sk": 98,
+	"./sk.js": 98,
+	"./sl": 99,
+	"./sl.js": 99,
+	"./sq": 100,
+	"./sq.js": 100,
+	"./sr": 102,
+	"./sr-cyrl": 101,
+	"./sr-cyrl.js": 101,
+	"./sr.js": 102,
+	"./ss": 103,
+	"./ss.js": 103,
+	"./sv": 104,
+	"./sv.js": 104,
+	"./sw": 105,
+	"./sw.js": 105,
+	"./ta": 106,
+	"./ta.js": 106,
+	"./te": 107,
+	"./te.js": 107,
+	"./tet": 108,
+	"./tet.js": 108,
+	"./th": 109,
+	"./th.js": 109,
+	"./tl-ph": 110,
+	"./tl-ph.js": 110,
+	"./tlh": 111,
+	"./tlh.js": 111,
+	"./tr": 112,
+	"./tr.js": 112,
+	"./tzl": 113,
+	"./tzl.js": 113,
+	"./tzm": 115,
+	"./tzm-latn": 114,
+	"./tzm-latn.js": 114,
+	"./tzm.js": 115,
+	"./uk": 116,
+	"./uk.js": 116,
+	"./ur": 117,
+	"./ur.js": 117,
+	"./uz": 119,
+	"./uz-latn": 118,
+	"./uz-latn.js": 118,
+	"./uz.js": 119,
+	"./vi": 120,
+	"./vi.js": 120,
+	"./x-pseudo": 121,
+	"./x-pseudo.js": 121,
+	"./yo": 122,
+	"./yo.js": 122,
+	"./zh-cn": 123,
+	"./zh-cn.js": 123,
+	"./zh-hk": 124,
+	"./zh-hk.js": 124,
+	"./zh-tw": 125,
+	"./zh-tw.js": 125
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -34624,10 +35723,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 159;
+webpackContext.id = 174;
 
 /***/ }),
-/* 160 */
+/* 175 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -34817,48 +35916,14 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 161 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(2)(
   /* script */
-  __webpack_require__(145),
+  __webpack_require__(147),
   /* template */
-  __webpack_require__(167),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/education.vue"
-if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
-if (Component.options.functional) {console.error("[vue-loader] education.vue: functional components are not supported with templates, they should use render functions.")}
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-740e2f3e", Component.options)
-  } else {
-    hotAPI.reload("data-v-740e2f3e", Component.options)
-  }
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 162 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(2)(
-  /* script */
-  __webpack_require__(146),
-  /* template */
-  __webpack_require__(165),
+  __webpack_require__(187),
   /* scopeId */
   null,
   /* cssModules */
@@ -34885,14 +35950,52 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 163 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Component = __webpack_require__(2)(
   /* script */
-  __webpack_require__(147),
+  __webpack_require__(148),
   /* template */
-  __webpack_require__(166),
+  __webpack_require__(192),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/education.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] education.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-c93a2e08", Component.options)
+  } else {
+    hotAPI.reload("data-v-c93a2e08", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 178 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(197)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(149),
+  /* template */
+  __webpack_require__(188),
   /* scopeId */
   null,
   /* cssModules */
@@ -34919,14 +36022,18 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 164 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(199)
 
 var Component = __webpack_require__(2)(
   /* script */
-  __webpack_require__(148),
+  __webpack_require__(150),
   /* template */
-  __webpack_require__(168),
+  __webpack_require__(191),
   /* scopeId */
   null,
   /* cssModules */
@@ -34953,7 +36060,497 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 165 */
+/* 180 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(201)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(151),
+  /* template */
+  __webpack_require__(194),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects/bigquery.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] bigquery.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-efdc3ede", Component.options)
+  } else {
+    hotAPI.reload("data-v-efdc3ede", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 181 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(200)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(152),
+  /* template */
+  __webpack_require__(193),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects/captcha.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] captcha.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e044707e", Component.options)
+  } else {
+    hotAPI.reload("data-v-e044707e", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 182 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(198)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(153),
+  /* template */
+  __webpack_require__(189),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects/grabpustak.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] grabpustak.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-37fc84b6", Component.options)
+  } else {
+    hotAPI.reload("data-v-37fc84b6", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 183 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(202)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(154),
+  /* template */
+  __webpack_require__(195),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects/kisanmitra.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] kisanmitra.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-fd2c17e4", Component.options)
+  } else {
+    hotAPI.reload("data-v-fd2c17e4", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 184 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(196)
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(155),
+  /* template */
+  __webpack_require__(186),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/projects/manitmoodle.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] manitmoodle.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0640733c", Component.options)
+  } else {
+    hotAPI.reload("data-v-0640733c", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 185 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(2)(
+  /* script */
+  __webpack_require__(156),
+  /* template */
+  __webpack_require__(190),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+Component.options.__file = "/home/ashish/Desktop/ashishpatel.info/resources/assets/js/views/work.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] work.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4d09e0ed", Component.options)
+  } else {
+    hotAPI.reload("data-v-4d09e0ed", Component.options)
+  }
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 186 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin-top": "-2em"
+    }
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "2em"
+    }
+  }, [_vm._v("Kisanmitra "), _c('span', {
+    staticClass: "tag is-primary",
+    staticStyle: {
+      "font-size": "0.4em"
+    }
+  }, [_c('a', {
+    staticStyle: {
+      "color": "white"
+    },
+    attrs: {
+      "href": "//kisanmitra.ml",
+      "target": "_blank"
+    }
+  }, [_vm._v("Visit Website")])])]), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"
+    }
+  })]), _vm._v(" "), _c('br'), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads",
+      "alt": "Total Downloads"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg",
+      "alt": "Latest UnStable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg",
+      "alt": "Latest Stable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg",
+      "alt": "License"
+    }
+  })])]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "project"
+    }
+  }, [_vm._v("Project at Github  ")]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/laravel-icon.png"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra"
+    }
+  }, [_vm._v("Web Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n               Web Application Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/laravel/laravel"
+    }
+  }, [_vm._v("@laravel")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/jquery/jquery"
+    }
+  }, [_vm._v("@jquery")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em",
+      "padding": "0em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/scikit-logo.jpg"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra-python"
+    }
+  }, [_vm._v("Machine learning Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n              Machine Learning Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ipython/ipython"
+    }
+  }, [_vm._v("@ipython ")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/scikit-learn/scikit-learn"
+    }
+  }, [_vm._v("@scikit-learn")])])])]), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "about-kisanmitra"
+    }
+  }, [_vm._v("About Kisanmitra")]), _vm._v(" "), _c('p', [_vm._v("Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions."), _c('br'), _vm._v("\n        We believe development of a country is possible only with the technical advancement of farmers,"), _c('br'), _vm._v("\n        an educated farmer can do way better than a experienced uneducated one, because he can use modern technology"), _c('br'), _vm._v("\n        to make proper planning about his/her future."), _c('br'), _vm._v("\n        using kisanmitra , one can predict the crop yield for next 5 year.")]), _c('br'), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/predict"
+    }
+  }, [_vm._v("Simple, fast Algorithm")]), _vm._v(".")]), _vm._v(" "), _c('li', [_vm._v("Expressive, intuitive visualization Using"), _c('a', {
+    staticClass: "uri",
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/visualize"
+    }
+  }, [_vm._v("Charts.")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/about"
+    }
+  }, [_vm._v("Robust background machine learning")]), _vm._v(".")]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/team"
+    }
+  }, [_vm._v("Hardworking Team")]), _vm._v(".")])]), _c('br'), _vm._v(" "), _c('p', [_vm._v("kisanmitra is accessible, yet powerful tools needed for crop yeild production."), _c('br'), _vm._v("\n        A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your"), _c('br'), _vm._v("\n        farming strategies according to environment and market.")]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "technology-used"
+    }
+  }, [_vm._v("technology used")]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//laravel.com"
+    }
+  }, [_c('img', {
+    staticClass: "image",
+    attrs: {
+      "width": "250",
+      "height": "200",
+      "src": "https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"
+    }
+  })])]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//scikit-learn.org"
+    }
+  }, [_c('img', {
+    attrs: {
+      "width": "250",
+      "height": "100",
+      "src": "http://www.scipy-lectures.org/_images/scikit-learn-logo.png"
+    }
+  })])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "contributing"
+    }
+  }, [_vm._v("Contributing")]), _vm._v(" "), _c('p', [_vm._v("You are welcome to contribute to this project,"), _c('br'), _vm._v("\n        Thank you for considering contributing for the greater good for farmers!")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h2', {
+    staticStyle: {
+      "font-size": "1.5em"
+    }
+  }, [_vm._v("steps")]), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_vm._v("fork or clone project")]), _vm._v(" "), _c('li', [_vm._v("run "), _c('code', [_vm._v("composer install")])]), _vm._v(" "), _c('li', [_vm._v("edit "), _c('code', [_vm._v(".env.example")]), _vm._v(" and create "), _c('code', [_vm._v(".env")]), _vm._v(" file for your settings")]), _vm._v(" "), _c('li', [_vm._v("that’s it happy coding..")])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "vulnerabilities"
+    }
+  }, [_vm._v("Vulnerabilities")]), _vm._v(" "), _c('p', [_vm._v("If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "mailto:ashishpatel0720@gmail.com"
+    }
+  }, [_vm._v("ashishpatel0720@gmail.com")]), _vm._v(". All vulnerabilities will be promptly addressed.")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "license"
+    }
+  }, [_vm._v("License")]), _vm._v(" "), _c('p', [_vm._v("kisanmitra is open-sourced software licensed under the "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "http://opensource.org/licenses/MIT"
+    }
+  }, [_vm._v("MIT license")]), _vm._v(".")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-0640733c", module.exports)
+  }
+}
+
+/***/ }),
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -34974,7 +36571,7 @@ if (false) {
 }
 
 /***/ }),
-/* 166 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -34984,32 +36581,80 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "inner-item"
   }, [_c('div', {
     staticClass: "text"
-  }, [_c('h4', [_vm._v("Hello , I'm Ashish Patel")]), _vm._v(" "), _c('div', [_c('p', {
+  }, [_c('h4', [_vm._v("Hello , I'm Ashish Patel")]), _vm._v(" "), _c('div', [_c('div', {
+    staticClass: "columns",
     staticStyle: {
-      "margin": "0.7em"
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
     }
-  }, [_vm._v("\n\t\t\t\t\thello everybody, i am Ashish Patel,\n\t\t\t\t\ta Final Year Computer Science student at "), _c('a', {
+  }, [_c('div', {
+    staticClass: "column is-4",
+    staticStyle: {
+      "margin-top": "2em"
+    }
+  }, [_c('div', {
+    staticClass: "card"
+  }, [_c('div', {
+    staticClass: "card-image"
+  }, [_c('figure', {
+    staticClass: "image"
+  }, [_c('img', {
     attrs: {
+      "src": "/images/me.jpg",
+      "alt": "Image"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-content"
+  }, [_c('p', {
+    staticClass: "title is-4",
+    staticStyle: {
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
+    }
+  }, [_vm._v("Ashish Patel\n\t\t\t\t\t\t\t\t\t"), _c('span', {
+    staticClass: "subtitle is-6"
+  }, [_vm._v("@ashishpatel0720")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n\t\t\t\t\t\t\t\tFinal Year Student at MANIT, Bhopal, An Institute of National Importance.\n\t\t\t\t\t\t\t\tPersuing Bechelor in Computer Science and Engineering.\n\t\t\t\t\t\t\t")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "column is-8"
+  }, [_c('p', {
+    staticStyle: {
+      "margin-top": "0.7em",
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
+    }
+  }, [_vm._v("\n\t\t\t\t\t\tHello everybody, i am Ashish Patel,\n\t\t\t\t\t\ta Final Year Computer Science student at "), _c('a', {
+    attrs: {
+      "target": "_blank",
       "href": "//manit.ac.in"
     }
-  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India).")]), _c('br'), _vm._v(" "), _c('br'), _vm._v(" I love to learn new technologies and try to learn them as soon as possible.\n\t\t\t\t\tI love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t\t")]), _vm._v(" "), _c('p', {
+  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India).")]), _c('br'), _vm._v(" "), _c('br'), _vm._v(" I love to learn new technologies and try to learn them as soon as possible.\n\t\t\t\t\t\tI love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t\t\t")]), _vm._v(" "), _c('p', {
     staticStyle: {
-      "margin": "1em"
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
     }
-  }, [_vm._v("\n\t\t\t\t\tI have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
+  }, [_vm._v("\n\t\t\t\t\t\tI have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//laravel.com"
     }
-  }, [_vm._v("Laravel")]), _vm._v(",\n\t\t\t\t\t"), _c('a', {
+  }, [_vm._v("Laravel")]), _vm._v(",\n\t\t\t\t\t\t"), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//codeigniter.com"
     }
   }, [_vm._v("Codeignitor")]), _vm._v(" and "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//flask.pocoo.org"
     }
-  }, [_vm._v("Flask.")]), _vm._v(" "), _c('br'), _vm._v("\n\t\t\t\t\tI also came to Know Javascript and I have worked in "), _c('a', {
+  }, [_vm._v("Flask.")]), _vm._v(" "), _c('br'), _vm._v("\n\t\t\t\t\t\tI also came to Know Javascript and I have worked in "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//vuejs.org"
     }
   }, [_vm._v("Vue Javascript Framework")]), _vm._v(" and "), _c('a', {
@@ -35018,26 +36663,25 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._v("Jquery API.")])]), _vm._v(" "), _c('p', {
     staticStyle: {
-      "margin": "1em"
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
     }
-  }, [_vm._v("\n\t\t\t\t\tIn Desktop App Developnment, I know Java and "), _c('a', {
+  }, [_vm._v("\n\t\t\t\t\t\tIn Desktop App Developnment, I know Java and "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//docs.oracle.com/javafx"
     }
-  }, [_vm._v("JavaFX API.")]), _vm._v(".\n\t\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\t\tAs I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\t\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\t\tI also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\t\t\t\t")]), _vm._v(" "), _c('p', {
+  }, [_vm._v("JavaFX API.")]), _vm._v(".\n\t\t\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\t\t\tAs I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\t\t\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\t\t\tI also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\t\t\t\t\t")]), _vm._v(" "), _c('p', {
     staticStyle: {
-      "margin": "1em"
+      "font-family": "Quicksand",
+      "font-size": "1.1em"
     }
-  }, [_vm._v("\n\t\t\t\t\tI know it is a lot to take in, but  As Last Note My Internship was in "), _c('a', {
+  }, [_vm._v("\n\t\t\t\t\t\tI know it is a lot to take in, but  As Last Note My Internship was in "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "//carwale.com"
     }
-  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n\t\t\t\t\tand my Minor Project was on Machine Learning with python Scikit-learn library.\n\t\t\t\t")]), _vm._v(" "), _c('a', {
-    staticClass: "btn btn-danger",
-    attrs: {
-      "href": "about/index.html"
-    }
-  }, [_vm._v("Learn more")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n\t\t\t\t\t\tand my Minor Project was on Machine Learning with python Scikit-learn library."), _c('br'), _c('br')])])]), _vm._v(" "), _c('div', {
     staticClass: "social-icons"
   }, [_c('div', {
     staticClass: "wrapper"
@@ -35052,8 +36696,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "our-clients",
     staticStyle: {
-      "margin": "0em",
-      "margin-top": "-2em"
+      "margin": "-2em -2em"
     }
   }, [_c('div', {
     staticClass: "row items owl-carousel",
@@ -35062,6 +36705,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('a', {
     attrs: {
+      "target": "_blank",
       "href": "https://linkedin.com/in/ashishpatel0720"
     }
   }, [_c('i', {
@@ -35071,12 +36715,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "color": "#3b5998"
     },
     attrs: {
+      "target": "_blank",
       "href": "https://facebook.com/ashishpatel0720"
     }
   }, [_c('i', {
     staticClass: "fa fa-facebook-square fa-4x"
   })]), _vm._v(" "), _c('a', {
     attrs: {
+      "target": "_blank",
       "href": "mailto:ashishpatel0720@gmail.com"
     }
   }, [_c('i', {
@@ -35086,6 +36732,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "color": "#cd486b"
     },
     attrs: {
+      "target": "_blank",
       "href": "https://instagram.com/ashishpatel0720"
     }
   }, [_c('i', {
@@ -35095,6 +36742,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "color": "#f48024"
     },
     attrs: {
+      "target": "_blank",
       "href": "https://stackoverflow.com/users/6178783/ashish-patel"
     }
   }, [_c('i', {
@@ -35104,6 +36752,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "color": "#5d2973"
     },
     attrs: {
+      "target": "_blank",
       "href": "https://github.com/ashishpatel0720"
     }
   }, [_c('i', {
@@ -35113,6 +36762,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "color": "#32cdfd"
     },
     attrs: {
+      "target": "_blank",
       "href": "https://twitter.com/ashishpatel0720"
     }
   }, [_c('i', {
@@ -35128,86 +36778,484 @@ if (false) {
 }
 
 /***/ }),
-/* 167 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _vm._m(0)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "inner-item"
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin-top": "-2em"
+    }
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "2em"
+    }
+  }, [_vm._v("Kisanmitra "), _c('span', {
+    staticClass: "tag is-primary",
+    staticStyle: {
+      "font-size": "0.4em"
+    }
+  }, [_c('a', {
+    staticStyle: {
+      "color": "white"
+    },
+    attrs: {
+      "href": "//kisanmitra.ml",
+      "target": "_blank"
+    }
+  }, [_vm._v("Visit Website")])])]), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"
+    }
+  })]), _vm._v(" "), _c('br'), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads",
+      "alt": "Total Downloads"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg",
+      "alt": "Latest UnStable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg",
+      "alt": "Latest Stable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg",
+      "alt": "License"
+    }
+  })])]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "project"
+    }
+  }, [_vm._v("Project at Github  ")]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em"
+    }
   }, [_c('div', {
-    staticClass: "text"
-  }, [_c('h4', [_vm._v("About")]), _vm._v(" "), _c('div', [_c('p', {
-    staticStyle: {
-      "margin": "0.7em"
-    }
-  }, [_vm._v("\n\t\t\t\thello everybody, i am Ashish Patel,\n\t\t\t\ta Final Year Computer Science student at "), _c('a', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
     attrs: {
-      "href": "//manit.ac.in"
+      "src": "/images/laravel-icon.png"
     }
-  }, [_vm._v("Maulana Azad National Institute of Technology, Bhopal(India).")]), _c('br'), _vm._v(" "), _c('br'), _vm._v(" I am a computer geek who loves linux and opensource projects,  I love to learn new technologies and try to learn them as soon as possible.\n\t\t\t\tI love Playing Chess and Cricket and reading a good piece of work from any novelist.\n\t\t\t")]), _vm._v(" "), _c('p', {
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
     staticStyle: {
-      "margin": "1em"
+      "font-size": "1.3em"
     }
-  }, [_vm._v("\n\t\t\t\tI have worked in Web Developnment with PHP and Python Backends. I have worked in three Web developnment Frameworks including "), _c('a', {
+  }, [_c('a', {
     attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra"
+    }
+  }, [_vm._v("Web Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n               Web Application Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/laravel/laravel"
+    }
+  }, [_vm._v("@laravel")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/jquery/jquery"
+    }
+  }, [_vm._v("@jquery")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em",
+      "padding": "0em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/scikit-logo.jpg"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra-python"
+    }
+  }, [_vm._v("Machine learning Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n              Machine Learning Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ipython/ipython"
+    }
+  }, [_vm._v("@ipython ")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/scikit-learn/scikit-learn"
+    }
+  }, [_vm._v("@scikit-learn")])])])]), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "about-kisanmitra"
+    }
+  }, [_vm._v("About Kisanmitra")]), _vm._v(" "), _c('p', [_vm._v("Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions."), _c('br'), _vm._v("\n        We believe development of a country is possible only with the technical advancement of farmers,"), _c('br'), _vm._v("\n        an educated farmer can do way better than a experienced uneducated one, because he can use modern technology"), _c('br'), _vm._v("\n        to make proper planning about his/her future."), _c('br'), _vm._v("\n        using kisanmitra , one can predict the crop yield for next 5 year.")]), _c('br'), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/predict"
+    }
+  }, [_vm._v("Simple, fast Algorithm")]), _vm._v(".")]), _vm._v(" "), _c('li', [_vm._v("Expressive, intuitive visualization Using"), _c('a', {
+    staticClass: "uri",
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/visualize"
+    }
+  }, [_vm._v("Charts.")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/about"
+    }
+  }, [_vm._v("Robust background machine learning")]), _vm._v(".")]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/team"
+    }
+  }, [_vm._v("Hardworking Team")]), _vm._v(".")])]), _c('br'), _vm._v(" "), _c('p', [_vm._v("kisanmitra is accessible, yet powerful tools needed for crop yeild production."), _c('br'), _vm._v("\n        A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your"), _c('br'), _vm._v("\n        farming strategies according to environment and market.")]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "technology-used"
+    }
+  }, [_vm._v("technology used")]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
       "href": "//laravel.com"
     }
-  }, [_vm._v("Laravel")]), _vm._v(",\n\t\t\t\t"), _c('a', {
+  }, [_c('img', {
+    staticClass: "image",
     attrs: {
-      "href": "//codeigniter.com"
+      "width": "250",
+      "height": "200",
+      "src": "https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"
     }
-  }, [_vm._v("Codeignitor")]), _vm._v(" and "), _c('a', {
+  })])]), _vm._v(" "), _c('p', [_c('a', {
     attrs: {
-      "href": "//flask.pocoo.org"
+      "target": "_blank",
+      "href": "//scikit-learn.org"
     }
-  }, [_vm._v("Flask.")]), _vm._v(" "), _c('br'), _vm._v("\n\t\t\t\tI also came to Know Javascript and I have worked in "), _c('a', {
+  }, [_c('img', {
     attrs: {
-      "href": "//vuejs.org"
+      "width": "250",
+      "height": "100",
+      "src": "http://www.scipy-lectures.org/_images/scikit-learn-logo.png"
     }
-  }, [_vm._v("Vue Javascript Framework")]), _vm._v(" and "), _c('a', {
+  })])]), _c('br'), _vm._v(" "), _c('h4', {
     attrs: {
-      "href": "//jquery.com"
+      "id": "contributing"
     }
-  }, [_vm._v("Jquery API.")])]), _vm._v(" "), _c('p', {
+  }, [_vm._v("Contributing")]), _vm._v(" "), _c('p', [_vm._v("You are welcome to contribute to this project,"), _c('br'), _vm._v("\n        Thank you for considering contributing for the greater good for farmers!")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h2', {
     staticStyle: {
-      "margin": "1em"
+      "font-size": "1.5em"
     }
-  }, [_vm._v("\n\t\t\t\tIn Desktop App Developnment, I know Java and "), _c('a', {
-    attrs: {
-      "href": "//docs.oracle.com/javafx"
-    }
-  }, [_vm._v("JavaFX API.")]), _vm._v(".\n\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\tAs I have already mentioned I love Linux(especially Ubuntu) , so have some experience in Bash Scripting and Regex(extended PERL based).\n\t\t\t\t"), _c('br'), _vm._v("\n\t\t\t\tI also know basic Programming languages like C, C++, Python and Markups like HTML, CSS.\n\t\t\t")]), _vm._v(" "), _c('p', {
+  }, [_vm._v("steps")]), _vm._v(" "), _c('ul', {
     staticStyle: {
-      "margin": "1em"
+      "list-style-type": "disc",
+      "margin-left": "2em"
     }
-  }, [_vm._v("\n\t\t\t\tI know it is a lot to take in, but  As Last Note My Internship was in "), _c('a', {
+  }, [_c('li', [_vm._v("fork or clone project")]), _vm._v(" "), _c('li', [_vm._v("run "), _c('code', [_vm._v("composer install")])]), _vm._v(" "), _c('li', [_vm._v("edit "), _c('code', [_vm._v(".env.example")]), _vm._v(" and create "), _c('code', [_vm._v(".env")]), _vm._v(" file for your settings")]), _vm._v(" "), _c('li', [_vm._v("that’s it happy coding..")])]), _c('br'), _vm._v(" "), _c('h4', {
     attrs: {
-      "href": "//carwale.com"
+      "id": "vulnerabilities"
     }
-  }, [_vm._v("CarWale")]), _vm._v(" and I have worked on BigData with Scala and Spark Stream Processing.\n\t\t\t\tand my Minor Project was on Machine Learning with python Scikit-learn library.\n\t\t\t")])])])])
+  }, [_vm._v("Vulnerabilities")]), _vm._v(" "), _c('p', [_vm._v("If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "mailto:ashishpatel0720@gmail.com"
+    }
+  }, [_vm._v("ashishpatel0720@gmail.com")]), _vm._v(". All vulnerabilities will be promptly addressed.")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "license"
+    }
+  }, [_vm._v("License")]), _vm._v(" "), _c('p', [_vm._v("kisanmitra is open-sourced software licensed under the "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "http://opensource.org/licenses/MIT"
+    }
+  }, [_vm._v("MIT license")]), _vm._v(".")])])
 }]}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-740e2f3e", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-37fc84b6", module.exports)
   }
 }
 
 /***/ }),
-/* 168 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _vm._m(0)
 },staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    staticClass: "panel panel-default"
+    staticClass: "columns"
   }, [_c('div', {
-    staticClass: "panel-body"
-  }, [_vm._v("\n       Project\n    ")])])
+    staticClass: "column"
+  }, [_c('h1', [_vm._v("hi")])])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-4d09e0ed", module.exports)
+  }
+}
+
+/***/ }),
+/* 191 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "columns"
+  }, [_c('div', {
+    staticClass: "column"
+  }, [_c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin": "0em"
+    }
+  }, [_c('h4', {
+    staticStyle: {
+      "margin-bottom": "0.5em"
+    }
+  }, [_vm._v("Projects")]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_vm._m(0), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_vm._m(1), _vm._v(" "), _c('router-link', {
+    attrs: {
+      "to": "/projects/kisanmitra"
+    }
+  }, [_c('span', {
+    staticClass: "tag is-primary"
+  }, [_vm._v(" Know More ")])]), _vm._v(" "), _c('br'), _vm._v("\n                                Carwale.com , May - June 2017"), _c('br'), _vm._v(" "), _c('b', [_vm._v(" Python , Flask, Scala , Spark , Cassandra")])], 1)])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_vm._m(2), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v("Kisan Mitra "), _c('span', {
+    staticStyle: {
+      "font-size": "0.7em"
+    }
+  }, [_vm._v(" , Minor Project ")]), _vm._v(" "), _c('router-link', {
+    attrs: {
+      "to": "/projects/kisanmitra"
+    }
+  }, [_c('span', {
+    staticClass: "tag is-primary"
+  }, [_vm._v(" Know More ")])])], 1), _vm._v(" "), _c('br'), _vm._v("\n                                MANIT , Jan - March, 2017"), _c('br'), _vm._v(" "), _c('b', [_vm._v(" Laravel Web Framework, Machine Learning , Python, Scikit-Learn ,PHP , JQuery")])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_vm._m(3), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v(" GrabPustak "), _c('span', {
+    staticStyle: {
+      "font-size": "0.7em"
+    }
+  }, [_vm._v(" , StartUp ")]), _vm._v(" "), _c('router-link', {
+    attrs: {
+      "to": "/projects/kisanmitra"
+    }
+  }, [_c('span', {
+    staticClass: "tag is-primary"
+  }, [_vm._v(" Know More ")])])], 1), _vm._v(" "), _c('br'), _vm._v("\n                                Online Library for sharing Notes and Free Books"), _c('br'), _vm._v(" "), _c('b', [_vm._v("CodeIgniter Web Framework, PHP, MySQL , JQuery , Javascript, Ajax")])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_vm._m(4), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v(" ManitMoodle "), _c('span', {
+    staticStyle: {
+      "font-size": "0.7em"
+    }
+  }, [_vm._v(" , Software Engineering Assignment Project ")]), _vm._v(" "), _c('router-link', {
+    attrs: {
+      "to": "/projects/manitmoodle"
+    }
+  }, [_c('span', {
+    staticClass: "tag is-primary"
+  }, [_vm._v(" Know More ")])])], 1), _vm._v(" "), _c('br'), _vm._v("\n                                Online Assignment Submission and Discussion WebApp"), _c('br'), _vm._v(" "), _c('b', [_vm._v("PHP, MySQL , Javascript, HTML, CSS")])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_vm._m(5), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v(" Captcha Validation "), _c('span', {
+    staticStyle: {
+      "font-size": "0.7em"
+    }
+  }, [_vm._v(" , PHP/Android Assignment Project ")]), _vm._v(" "), _c('router-link', {
+    attrs: {
+      "to": "/projects/captcha"
+    }
+  }, [_c('span', {
+    staticClass: "tag is-primary"
+  }, [_vm._v(" Know More ")])])], 1), _vm._v(" "), _c('br'), _vm._v("\n                                Online Captcha Validation Application"), _c('br'), _vm._v(" "), _c('b', [_vm._v("HTML, CSS, JavaScript , PHP ")])])])])])])])])])
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    staticStyle: {
+      "border-radius": "0.5em"
+    },
+    attrs: {
+      "src": "http://www.androidos.in/wp-content/uploads/2013/12/carwale-logo.png",
+      "alt": "Image"
+    }
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v("Cassandra BigQuery "), _c('span', {
+    staticStyle: {
+      "font-size": "0.7em"
+    }
+  }, [_vm._v(" , Internship Project ")])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    staticStyle: {
+      "border-radius": "0.5em"
+    },
+    attrs: {
+      "src": "http://i.imgur.com/RxaZWYI.jpg",
+      "alt": "Image"
+    }
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/grabpustak.png",
+      "alt": "Image"
+    }
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "https://h5p.org/sites/default/files/moodle-icon-page_0.png",
+      "alt": "Image"
+    }
+  })])])
+},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "https://maxcdn.icons8.com/Share/icon/Security//captcha1600.png",
+      "alt": "Image"
+    }
+  })])])
 }]}
 module.exports.render._withStripped = true
 if (false) {
@@ -35218,7 +37266,1125 @@ if (false) {
 }
 
 /***/ }),
-/* 169 */
+/* 192 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "columns"
+  }, [_c('div', {
+    staticClass: "column"
+  }, [_c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin": "0em"
+    }
+  }, [_c('h4', {
+    staticStyle: {
+      "margin-bottom": "0.5em"
+    }
+  }, [_vm._v("Education")]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "https://img.collegepravesh.com/2015/08/MANIT-Logo.png",
+      "alt": "Image"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v("Bachelor of Technology "), _c('span', {
+    staticStyle: {
+      "font-size": "0.6em"
+    }
+  }, [_vm._v(" , Computer Science & Engineering (2014 - 2018)")])]), _vm._v(" "), _c('br'), _vm._v("\n                                MANIT Bhopal"), _c('br'), _vm._v(" "), _c('b', [_vm._v("CGPA : 8.45/10")])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "https://upload.wikimedia.org/wikipedia/en/d/d5/Board_of_Secondary_Education%2C_Madhya_Pradesh_logo.jpg",
+      "alt": "Image"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v("XII (Higher Secondary)"), _c('span', {
+    staticStyle: {
+      "font-size": "0.6em"
+    }
+  }, [_vm._v(" , Science (2012 - 2013)")])]), _vm._v(" "), _c('br'), _vm._v("\n                                I.P.S. Academy, Bhind Madhya Pradesh , India"), _c('br'), _vm._v(" "), _c('b', [_vm._v("Percentage : 90.20%")])])])])])]), _vm._v(" "), _c('div', {
+    staticClass: "box"
+  }, [_c('article', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-64x64"
+  }, [_c('img', {
+    attrs: {
+      "src": "https://upload.wikimedia.org/wikipedia/en/d/d5/Board_of_Secondary_Education%2C_Madhya_Pradesh_logo.jpg",
+      "alt": "Image"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('div', {
+    staticClass: "content"
+  }, [_c('p', [_c('span', {
+    staticStyle: {
+      "font-size": "1.4em"
+    }
+  }, [_vm._v("X ( High School )"), _c('span', {
+    staticStyle: {
+      "font-size": "0.6em"
+    }
+  }, [_vm._v(" (2010 - 2011)")])]), _vm._v(" "), _c('br'), _vm._v("\n                                I.P.S. Academy, Bhind Madhya Pradesh , India"), _c('br'), _vm._v(" "), _c('b', [_vm._v("Percentage : 83.40%")])])])])])])])])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-c93a2e08", module.exports)
+  }
+}
+
+/***/ }),
+/* 193 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin-top": "-2em"
+    }
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "2em"
+    }
+  }, [_vm._v("Kisanmitra "), _c('span', {
+    staticClass: "tag is-primary",
+    staticStyle: {
+      "font-size": "0.4em"
+    }
+  }, [_c('a', {
+    staticStyle: {
+      "color": "white"
+    },
+    attrs: {
+      "href": "//kisanmitra.ml",
+      "target": "_blank"
+    }
+  }, [_vm._v("Visit Website")])])]), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"
+    }
+  })]), _vm._v(" "), _c('br'), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads",
+      "alt": "Total Downloads"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg",
+      "alt": "Latest UnStable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg",
+      "alt": "Latest Stable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg",
+      "alt": "License"
+    }
+  })])]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "project"
+    }
+  }, [_vm._v("Project at Github  ")]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/laravel-icon.png"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra"
+    }
+  }, [_vm._v("Web Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n               Web Application Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/laravel/laravel"
+    }
+  }, [_vm._v("@laravel")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/jquery/jquery"
+    }
+  }, [_vm._v("@jquery")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em",
+      "padding": "0em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/scikit-logo.jpg"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra-python"
+    }
+  }, [_vm._v("Machine learning Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n              Machine Learning Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ipython/ipython"
+    }
+  }, [_vm._v("@ipython ")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/scikit-learn/scikit-learn"
+    }
+  }, [_vm._v("@scikit-learn")])])])]), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "about-kisanmitra"
+    }
+  }, [_vm._v("About Kisanmitra")]), _vm._v(" "), _c('p', [_vm._v("Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions."), _c('br'), _vm._v("\n        We believe development of a country is possible only with the technical advancement of farmers,"), _c('br'), _vm._v("\n        an educated farmer can do way better than a experienced uneducated one, because he can use modern technology"), _c('br'), _vm._v("\n        to make proper planning about his/her future."), _c('br'), _vm._v("\n        using kisanmitra , one can predict the crop yield for next 5 year.")]), _c('br'), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/predict"
+    }
+  }, [_vm._v("Simple, fast Algorithm")]), _vm._v(".")]), _vm._v(" "), _c('li', [_vm._v("Expressive, intuitive visualization Using"), _c('a', {
+    staticClass: "uri",
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/visualize"
+    }
+  }, [_vm._v("Charts.")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/about"
+    }
+  }, [_vm._v("Robust background machine learning")]), _vm._v(".")]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/team"
+    }
+  }, [_vm._v("Hardworking Team")]), _vm._v(".")])]), _c('br'), _vm._v(" "), _c('p', [_vm._v("kisanmitra is accessible, yet powerful tools needed for crop yeild production."), _c('br'), _vm._v("\n        A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your"), _c('br'), _vm._v("\n        farming strategies according to environment and market.")]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "technology-used"
+    }
+  }, [_vm._v("technology used")]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//laravel.com"
+    }
+  }, [_c('img', {
+    staticClass: "image",
+    attrs: {
+      "width": "250",
+      "height": "200",
+      "src": "https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"
+    }
+  })])]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//scikit-learn.org"
+    }
+  }, [_c('img', {
+    attrs: {
+      "width": "250",
+      "height": "100",
+      "src": "http://www.scipy-lectures.org/_images/scikit-learn-logo.png"
+    }
+  })])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "contributing"
+    }
+  }, [_vm._v("Contributing")]), _vm._v(" "), _c('p', [_vm._v("You are welcome to contribute to this project,"), _c('br'), _vm._v("\n        Thank you for considering contributing for the greater good for farmers!")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h2', {
+    staticStyle: {
+      "font-size": "1.5em"
+    }
+  }, [_vm._v("steps")]), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_vm._v("fork or clone project")]), _vm._v(" "), _c('li', [_vm._v("run "), _c('code', [_vm._v("composer install")])]), _vm._v(" "), _c('li', [_vm._v("edit "), _c('code', [_vm._v(".env.example")]), _vm._v(" and create "), _c('code', [_vm._v(".env")]), _vm._v(" file for your settings")]), _vm._v(" "), _c('li', [_vm._v("that’s it happy coding..")])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "vulnerabilities"
+    }
+  }, [_vm._v("Vulnerabilities")]), _vm._v(" "), _c('p', [_vm._v("If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "mailto:ashishpatel0720@gmail.com"
+    }
+  }, [_vm._v("ashishpatel0720@gmail.com")]), _vm._v(". All vulnerabilities will be promptly addressed.")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "license"
+    }
+  }, [_vm._v("License")]), _vm._v(" "), _c('p', [_vm._v("kisanmitra is open-sourced software licensed under the "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "http://opensource.org/licenses/MIT"
+    }
+  }, [_vm._v("MIT license")]), _vm._v(".")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-e044707e", module.exports)
+  }
+}
+
+/***/ }),
+/* 194 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin-top": "-2em"
+    }
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "2em"
+    }
+  }, [_vm._v("Kisanmitra "), _c('span', {
+    staticClass: "tag is-primary",
+    staticStyle: {
+      "font-size": "0.4em"
+    }
+  }, [_c('a', {
+    staticStyle: {
+      "color": "white"
+    },
+    attrs: {
+      "href": "//kisanmitra.ml",
+      "target": "_blank"
+    }
+  }, [_vm._v("Visit Website")])])]), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"
+    }
+  })]), _vm._v(" "), _c('br'), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads",
+      "alt": "Total Downloads"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg",
+      "alt": "Latest UnStable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg",
+      "alt": "Latest Stable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg",
+      "alt": "License"
+    }
+  })])]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "project"
+    }
+  }, [_vm._v("Project at Github  ")]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/laravel-icon.png"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra"
+    }
+  }, [_vm._v("Web Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n               Web Application Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/laravel/laravel"
+    }
+  }, [_vm._v("@laravel")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/jquery/jquery"
+    }
+  }, [_vm._v("@jquery")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em",
+      "padding": "0em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/scikit-logo.jpg"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra-python"
+    }
+  }, [_vm._v("Machine learning Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n              Machine Learning Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ipython/ipython"
+    }
+  }, [_vm._v("@ipython ")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/scikit-learn/scikit-learn"
+    }
+  }, [_vm._v("@scikit-learn")])])])]), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "about-kisanmitra"
+    }
+  }, [_vm._v("About Kisanmitra")]), _vm._v(" "), _c('p', [_vm._v("Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions."), _c('br'), _vm._v("\n        We believe development of a country is possible only with the technical advancement of farmers,"), _c('br'), _vm._v("\n        an educated farmer can do way better than a experienced uneducated one, because he can use modern technology"), _c('br'), _vm._v("\n        to make proper planning about his/her future."), _c('br'), _vm._v("\n        using kisanmitra , one can predict the crop yield for next 5 year.")]), _c('br'), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/predict"
+    }
+  }, [_vm._v("Simple, fast Algorithm")]), _vm._v(".")]), _vm._v(" "), _c('li', [_vm._v("Expressive, intuitive visualization Using"), _c('a', {
+    staticClass: "uri",
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/visualize"
+    }
+  }, [_vm._v("Charts.")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/about"
+    }
+  }, [_vm._v("Robust background machine learning")]), _vm._v(".")]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/team"
+    }
+  }, [_vm._v("Hardworking Team")]), _vm._v(".")])]), _c('br'), _vm._v(" "), _c('p', [_vm._v("kisanmitra is accessible, yet powerful tools needed for crop yeild production."), _c('br'), _vm._v("\n        A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your"), _c('br'), _vm._v("\n        farming strategies according to environment and market.")]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "technology-used"
+    }
+  }, [_vm._v("technology used")]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//laravel.com"
+    }
+  }, [_c('img', {
+    staticClass: "image",
+    attrs: {
+      "width": "250",
+      "height": "200",
+      "src": "https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"
+    }
+  })])]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//scikit-learn.org"
+    }
+  }, [_c('img', {
+    attrs: {
+      "width": "250",
+      "height": "100",
+      "src": "http://www.scipy-lectures.org/_images/scikit-learn-logo.png"
+    }
+  })])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "contributing"
+    }
+  }, [_vm._v("Contributing")]), _vm._v(" "), _c('p', [_vm._v("You are welcome to contribute to this project,"), _c('br'), _vm._v("\n        Thank you for considering contributing for the greater good for farmers!")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h2', {
+    staticStyle: {
+      "font-size": "1.5em"
+    }
+  }, [_vm._v("steps")]), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_vm._v("fork or clone project")]), _vm._v(" "), _c('li', [_vm._v("run "), _c('code', [_vm._v("composer install")])]), _vm._v(" "), _c('li', [_vm._v("edit "), _c('code', [_vm._v(".env.example")]), _vm._v(" and create "), _c('code', [_vm._v(".env")]), _vm._v(" file for your settings")]), _vm._v(" "), _c('li', [_vm._v("that’s it happy coding..")])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "vulnerabilities"
+    }
+  }, [_vm._v("Vulnerabilities")]), _vm._v(" "), _c('p', [_vm._v("If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "mailto:ashishpatel0720@gmail.com"
+    }
+  }, [_vm._v("ashishpatel0720@gmail.com")]), _vm._v(". All vulnerabilities will be promptly addressed.")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "license"
+    }
+  }, [_vm._v("License")]), _vm._v(" "), _c('p', [_vm._v("kisanmitra is open-sourced software licensed under the "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "http://opensource.org/licenses/MIT"
+    }
+  }, [_vm._v("MIT license")]), _vm._v(".")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-efdc3ede", module.exports)
+  }
+}
+
+/***/ }),
+/* 195 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _vm._m(0)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "inner-item",
+    staticStyle: {
+      "margin-top": "-2em"
+    }
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "2em"
+    }
+  }, [_vm._v("Kisanmitra "), _c('span', {
+    staticClass: "tag is-primary",
+    staticStyle: {
+      "font-size": "0.4em"
+    }
+  }, [_c('a', {
+    staticStyle: {
+      "color": "white"
+    },
+    attrs: {
+      "href": "//kisanmitra.ml",
+      "target": "_blank"
+    }
+  }, [_vm._v("Visit Website")])])]), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"
+    }
+  })]), _vm._v(" "), _c('br'), _vm._v(" "), _c('p', {
+    attrs: {
+      "align": "center"
+    }
+  }, [_c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads",
+      "alt": "Total Downloads"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg",
+      "alt": "Latest UnStable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg",
+      "alt": "Latest Stable Version"
+    }
+  })]), _vm._v(" "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://packagist.org/packages/ashishpatel0720/kisanmitra"
+    }
+  }, [_c('img', {
+    attrs: {
+      "src": "https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg",
+      "alt": "License"
+    }
+  })])]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "project"
+    }
+  }, [_vm._v("Project at Github  ")]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/laravel-icon.png"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra"
+    }
+  }, [_vm._v("Web Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n               Web Application Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/laravel/laravel"
+    }
+  }, [_vm._v("@laravel")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/jquery/jquery"
+    }
+  }, [_vm._v("@jquery")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "card",
+    staticStyle: {
+      "margin-left": "2em",
+      "margin-right": "2em",
+      "margin": "1em 1em",
+      "padding": "0em"
+    }
+  }, [_c('div', {
+    staticClass: "card-content"
+  }, [_c('div', {
+    staticClass: "media"
+  }, [_c('div', {
+    staticClass: "media-left"
+  }, [_c('figure', {
+    staticClass: "image is-48x48"
+  }, [_c('img', {
+    attrs: {
+      "src": "/images/scikit-logo.jpg"
+    }
+  })])]), _vm._v(" "), _c('div', {
+    staticClass: "media-content"
+  }, [_c('span', {
+    staticStyle: {
+      "font-size": "1.3em"
+    }
+  }, [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ashishpatel0720/kisanmitra-python"
+    }
+  }, [_vm._v("Machine learning Application Part")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "content"
+  }, [_vm._v("\n              Machine Learning Part of the project written in "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/ipython/ipython"
+    }
+  }, [_vm._v("@ipython ")]), _vm._v(" and "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//github.com/scikit-learn/scikit-learn"
+    }
+  }, [_vm._v("@scikit-learn")])])])]), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "about-kisanmitra"
+    }
+  }, [_vm._v("About Kisanmitra")]), _vm._v(" "), _c('p', [_vm._v("Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions."), _c('br'), _vm._v("\n        We believe development of a country is possible only with the technical advancement of farmers,"), _c('br'), _vm._v("\n        an educated farmer can do way better than a experienced uneducated one, because he can use modern technology"), _c('br'), _vm._v("\n        to make proper planning about his/her future."), _c('br'), _vm._v("\n        using kisanmitra , one can predict the crop yield for next 5 year.")]), _c('br'), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/predict"
+    }
+  }, [_vm._v("Simple, fast Algorithm")]), _vm._v(".")]), _vm._v(" "), _c('li', [_vm._v("Expressive, intuitive visualization Using"), _c('a', {
+    staticClass: "uri",
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/visualize"
+    }
+  }, [_vm._v("Charts.")])]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/about"
+    }
+  }, [_vm._v("Robust background machine learning")]), _vm._v(".")]), _vm._v(" "), _c('li', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "https://kisanmitra.ml/team"
+    }
+  }, [_vm._v("Hardworking Team")]), _vm._v(".")])]), _c('br'), _vm._v(" "), _c('p', [_vm._v("kisanmitra is accessible, yet powerful tools needed for crop yeild production."), _c('br'), _vm._v("\n        A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your"), _c('br'), _vm._v("\n        farming strategies according to environment and market.")]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "technology-used"
+    }
+  }, [_vm._v("technology used")]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//laravel.com"
+    }
+  }, [_c('img', {
+    staticClass: "image",
+    attrs: {
+      "width": "250",
+      "height": "200",
+      "src": "https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"
+    }
+  })])]), _vm._v(" "), _c('p', [_c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "//scikit-learn.org"
+    }
+  }, [_c('img', {
+    attrs: {
+      "width": "250",
+      "height": "100",
+      "src": "http://www.scipy-lectures.org/_images/scikit-learn-logo.png"
+    }
+  })])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "contributing"
+    }
+  }, [_vm._v("Contributing")]), _vm._v(" "), _c('p', [_vm._v("You are welcome to contribute to this project,"), _c('br'), _vm._v("\n        Thank you for considering contributing for the greater good for farmers!")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h2', {
+    staticStyle: {
+      "font-size": "1.5em"
+    }
+  }, [_vm._v("steps")]), _vm._v(" "), _c('ul', {
+    staticStyle: {
+      "list-style-type": "disc",
+      "margin-left": "2em"
+    }
+  }, [_c('li', [_vm._v("fork or clone project")]), _vm._v(" "), _c('li', [_vm._v("run "), _c('code', [_vm._v("composer install")])]), _vm._v(" "), _c('li', [_vm._v("edit "), _c('code', [_vm._v(".env.example")]), _vm._v(" and create "), _c('code', [_vm._v(".env")]), _vm._v(" file for your settings")]), _vm._v(" "), _c('li', [_vm._v("that’s it happy coding..")])]), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "vulnerabilities"
+    }
+  }, [_vm._v("Vulnerabilities")]), _vm._v(" "), _c('p', [_vm._v("If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "mailto:ashishpatel0720@gmail.com"
+    }
+  }, [_vm._v("ashishpatel0720@gmail.com")]), _vm._v(". All vulnerabilities will be promptly addressed.")]), _vm._v(" "), _c('br'), _vm._v(" "), _c('h4', {
+    attrs: {
+      "id": "license"
+    }
+  }, [_vm._v("License")]), _vm._v(" "), _c('p', [_vm._v("kisanmitra is open-sourced software licensed under the "), _c('a', {
+    attrs: {
+      "target": "_blank",
+      "href": "http://opensource.org/licenses/MIT"
+    }
+  }, [_vm._v("MIT license")]), _vm._v(".")])])
+}]}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-fd2c17e4", module.exports)
+  }
+}
+
+/***/ }),
+/* 196 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(166);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("915911f8", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-0640733c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./manitmoodle.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-0640733c\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./manitmoodle.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 197 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(167);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("0cd2628d", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-2dfb77bb\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./home.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-2dfb77bb\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./home.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 198 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(168);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("f8ed837c", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-37fc84b6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grabpustak.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-37fc84b6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./grabpustak.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 199 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(169);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("63bcad24", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-7d48d3d6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./projects.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-7d48d3d6\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./projects.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 200 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(170);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("07d98fbb", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-e044707e\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./captcha.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-e044707e\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./captcha.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 201 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(171);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("437c61d8", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-efdc3ede\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./bigquery.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-efdc3ede\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./bigquery.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 202 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(172);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("e4327e68", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-fd2c17e4\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./kisanmitra.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"id\":\"data-v-fd2c17e4\",\"scoped\":false,\"hasInlineConfig\":true}!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./kisanmitra.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 203 */
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
+
+/***/ }),
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44914,10 +48080,10 @@ Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(205)))
 
 /***/ }),
-/* 170 */
+/* 205 */
 /***/ (function(module, exports) {
 
 var g;
@@ -44944,7 +48110,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 171 */
+/* 206 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -44972,11 +48138,11 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 172 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(125);
-module.exports = __webpack_require__(126);
+__webpack_require__(127);
+module.exports = __webpack_require__(128);
 
 
 /***/ })

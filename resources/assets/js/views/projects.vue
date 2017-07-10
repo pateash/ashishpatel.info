@@ -62,7 +62,7 @@
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em"> GrabPustak
+                                    <span style="font-size:1.4em"> GrabPustak <span style="font-size:0.7em"> , StartUp </span>
                                       <router-link to="/projects/kisanmitra"><span class="tag is-primary"> Know More </span></router-link>
 
                                     </span>
@@ -86,7 +86,7 @@
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em"> ManitMoodle
+                                    <span style="font-size:1.4em"> ManitMoodle <span style="font-size:0.7em"> , Software Engineering Assignment Project </span>
                                       <router-link to="/projects/manitmoodle"><span class="tag is-primary"> Know More </span></router-link>
                                     </span>
                                     <br>
@@ -109,9 +109,8 @@
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em"> Captcha Validation
+                                    <span style="font-size:1.4em"> Captcha Validation <span style="font-size:0.7em"> , PHP/Android Assignment Project </span>
                                       <router-link to="/projects/captcha"><span class="tag is-primary"> Know More </span></router-link>
-
                                     </span>
                                     <br>
                                     Online Captcha Validation Application<br>

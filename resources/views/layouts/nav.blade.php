@@ -8,9 +8,9 @@
             <router-link to="/education">Education</router-link>
         </li>
 
-         <li>
-             <router-link to="/work">Work</router-link>
-         </li>
+         {{--<li>--}}
+             {{--<router-link to="/work">Work</router-link>--}}
+         {{--</li>--}}
 
          <li>
              <router-link to="/projects">Projects</router-link>
