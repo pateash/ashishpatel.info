@@ -2,7 +2,7 @@
     <!--<div class="columns">-->
     <!--<div class="column">-->
     <div class="inner-item" style="margin-top:-2em">
-        <span style="font-size:2em">Kisanmitra <span class="tag is-primary" style="font-size:0.4em;"><a href="//kisanmitra.ml" target="_blank" style="color:white">Visit Website</a></span></span>
+        <span style="font-size:2em;">Kisanmitra <span class="tag is-primary" style="font-size:0.4em;"><a href="//kisanmitra.ml" target="_blank" style="color:white">Visit Website</a></span></span>
         <p align="center"><img src="http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"></p>
         <br>
         <p align="center">

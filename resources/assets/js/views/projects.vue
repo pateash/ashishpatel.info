@@ -16,7 +16,7 @@
                             <div class="content">
                                 <p><!--title-->
                                     <span style="font-size:1.4em">Cassandra BigQuery <span style="font-size:0.7em"> , Internship Project </span></span>
-                                    <router-link to="/projects/kisanmitra"><span class="tag is-primary"> Know More </span></router-link>
+                                    <router-link to="/projects/bigquery"><span class="tag is-primary"> Know More </span></router-link>
 
                                     <br>
                                     Carwale.com , May - June 2017<br>
@@ -63,7 +63,7 @@
                             <div class="content">
                                 <p><!--title-->
                                     <span style="font-size:1.4em"> GrabPustak <span style="font-size:0.7em"> , StartUp </span>
-                                      <router-link to="/projects/kisanmitra"><span class="tag is-primary"> Know More </span></router-link>
+                                      <router-link to="/projects/grabpustak"><span class="tag is-primary"> Know More </span></router-link>
 
                                     </span>
                                     <br>

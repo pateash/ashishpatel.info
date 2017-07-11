@@ -28,6 +28,10 @@ let routes=[
     },
     {
         path:"/projects/bigquery",
+        redirect:"/projects/bigquery/architecture"
+    },
+    {
+        path:"/projects/bigquery/architecture",
         component:require("./views/projects/bigquery.vue")
     },
     {
@@ -42,7 +46,10 @@ let routes=[
         path:"/projects/captcha",
         component:require("./views/projects/captcha.vue")
     },
-
+    {
+        path:"/projects/bigquery/project",
+        component:require("./views/projects/bigquery_project.vue")
+    },
 
 
 ]

@@ -2,99 +2,47 @@
     <!--<div class="columns">-->
     <!--<div class="column">-->
     <div class="inner-item" style="margin-top:-2em">
-        <span style="font-size:2em">Kisanmitra <span class="tag is-primary" style="font-size:0.4em;"><a href="//kisanmitra.ml" target="_blank" style="color:white">Visit Website</a></span></span>
-        <p align="center"><img src="http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"></p>
-        <br>
-        <p align="center">
-            <a href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/downloads" alt="Total Downloads"></a>
-            <a href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg" alt="Latest UnStable Version"></a>
-            <a  target='_blank' href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg" alt="Latest Stable Version"></a>
-            <a  target='_blank' href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg" alt="License"></a>
-        </p>
-        <br>
-        <!--//-->
-        <h4 id="project">Project at Github  </h4>
-        <div class="card" style="margin-left:2em;margin-right:2em;margin:1em 1em;">
-            <div class="card-content">
+        <p class="ap-heading"><span style="font-size:2em">CarWale BigQuery</span></p>
+        <p align="center"><img src="/images/ArchitectureDiagram.jpg"></p>
 
-                <div class="media">
-                    <div class="media-left">
-                        <figure class="image is-48x48">
-                            <img src="/images/laravel-icon.png">
-                        </figure>
-                    </div>
-                    <div class="media-content">
-                        <span style="font-size:1.3em" ><a  target='_blank' href="//github.com/ashishpatel0720/kisanmitra">Web Application Part</a> </span>
-                    </div>
-                </div>
-                <div class="content">
-                   Web Application Part of the project written in <a  target='_blank' href="//github.com/laravel/laravel">@laravel</a> and <a  target='_blank' href="//github.com/jquery/jquery">@jquery</a>   </div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-left:2em;margin-right:2em;margin:1em 1em; padding:0em;">
-            <div class="card-content">
-
-                <div class="media">
-                    <div class="media-left">
-                        <figure class="image is-48x48">
-                            <img src="/images/scikit-logo.jpg">
-                        </figure>
-                    </div>
-                    <div class="media-content">
-                        <span style="font-size:1.3em" ><a  target='_blank' href="//github.com/ashishpatel0720/kisanmitra-python">Machine learning Application Part</a> </span>
-                    </div>
-                </div>
-                <div class="content">
-                  Machine Learning Part of the project written in <a  target='_blank' href="//github.com/ipython/ipython">@ipython </a> and <a  target='_blank' href="//github.com/scikit-learn/scikit-learn">@scikit-learn</a></div>
-            </div>
-        </div>
-
-        <h4 id="about-kisanmitra">About Kisanmitra</h4>
-        <p>Kisan is a machine learning based web application with expressive, elegant visualization of yield predictions.<br />
-            We believe development of a country is possible only with the technical advancement of farmers,<br />
-            an educated farmer can do way better than a experienced uneducated one, because he can use modern technology<br />
-            to make proper planning about his/her future.<br />
-            using kisanmitra , one can predict the crop yield for next 5 year.</p><br>
+        <h4 id="about">About</h4>
+        <p  style="font-size:1em">
+            CW BigQuery is a service that enables interactive analysis of massively large datasets stored in Cassandra Storage.
+            It allows user to submit and schedule Spark Job , just using SQL like syntax. </p>
+        <h4 id="architecture" style="margin-top:1em;">Architecture</h4>
+        <p style="font-size:1em">The Architecture of Bigquery consists of three components</p>
         <ul style="list-style-type:disc;margin-left:2em;">
-            <li><a  target='_blank' href="https://kisanmitra.ml/predict">Simple, fast Algorithm</a>.</li>
-            <li>Expressive, intuitive visualization Using<a  target='_blank' href="https://kisanmitra.ml/visualize" class="uri">Charts.</a></li>
-            <li><a  target='_blank' href="https://kisanmitra.ml/about">Robust background machine learning</a>.</li>
-            <li><a  target='_blank' href="https://kisanmitra.ml/team">Hardworking Team</a>.</li>
+            <li>ProxyQuery</li>
+            <li>Mist Server</li>
+            <li>Spark</li>
         </ul><br>
-        <p>kisanmitra is accessible, yet powerful tools needed for crop yeild production.<br />
-            A superb combination of simplicity, elegance, and innovation give you tools you need to properly regulate your<br />
-            farming strategies according to environment and market.</p><br>
-        <h4 id="technology-used">technology used</h4>
-        <p >
-            <a  target='_blank' href="//laravel.com" ><img class='image' width='250' height='200'
-                                                         src="https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"></a>
+        <h4 id="query-proxy">Query Proxy</h4>
+        <p style="font-size:1em">Query Proxy is Most important component of our system, it acts as mediator (as the name <strong>Proxy</strong> suggests) between Web Application and the <strong>Mist Server</strong>.</p>
+        <p style="font-size:1em">It receives request from the user , validates and push the job request in queue along with returning Jobid to user, if queue is empty.</p>
+        <p style="font-size:1em ">After getting responce from Query Proxy, it save responce to file named after the <strong>job Id</strong> .</p>
+        <p style="font-size:1em">When User request for result it will generate result using pagination and return result to ther user.</p>
+        <p style="font-size:1em"><strong>Query Proxy</strong> is also responsible for cleaning response files after certain amount of time.</p>
+        <p align="center"><img style='margin:1em;' src="images/ProxyQuery.jpg" alt="proxyQuery" /></p>
+        <h4 id="mist-server">Mist Server</h4>
+        <p style="font-size:1em">
+        <p style="font-size:1em;" ><img align="left" src="images/mist.png" alt="proxyQuery" width="200" height="100" style="margin:1em;" /></p>
+        <p style="font-size:1em">MistServer is a full-featured, next-generation streaming media toolkit for OTT (internet streaming). It takes care of all the annoying little problems you come across in media streaming projects, allowing you to focus on what makes your product or service unique. The MistServer software and our accompanying services allow anyone to quickly gain and keep a competitive edge.</p>
+        <p style="font-size:1em">MistServer is written entirely in C++ and comes with an easy to use and integrate JSON API.</p>
+        <p style="font-size:1em">for knowing more about what is media server checkout mistserver <a href="https://mistserver.org/mistserver">documentation</a></p>
         </p>
+        <h4 id="spark">Spark</h4>
         <p>
-            <a  target='_blank' href="//scikit-learn.org" ><img width='250' height='100' src="http://www.scipy-lectures.org/_images/scikit-learn-logo.png"></a>
-        </p><br>
-        <h4 id="contributing">Contributing</h4>
-        <p>You are welcome to contribute to this project,<br />
-            Thank you for considering contributing for the greater good for farmers!</p>
-        <br>
-        <h2 style="font-size:1.5em">steps</h2>
-        <ul style="list-style-type:disc;margin-left:2em;">
-            <li>fork or clone project</li>
-            <li>run <code>composer install</code></li>
-            <li>edit <code>.env.example</code> and create <code>.env</code> file for your settings</li>
-            <li>that’s it happy coding..</li>
-        </ul><br>
-        <h4 id="vulnerabilities">Vulnerabilities</h4>
-        <p>If you discover a vulnerability within kisanmitra, please send an e-mail to Ashish Patel at <a  target='_blank' href="mailto:ashishpatel0720@gmail.com">ashishpatel0720@gmail.com</a>. All vulnerabilities will be promptly addressed.</p>
-        <br>
-        <h4 id="license">License</h4>
-        <p>kisanmitra is open-sourced software licensed under the <a  target='_blank' href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
+        <p ><img  align="left" src="images/spark.png"  style="margin:1em;" alt="Spark" width="200" height="100" /></p>
+        <p>Apache Spark™ is a fast and general engine for large-scale data processing</p>
+        <p>Spark Run programs up to 100x faster than Hadoop MapReduce in memory, or 10x faster on disk.</p>
+        <p>Spark offers over 80 high-level operators that make it easy to build parallel apps. And you can use it interactively from the Scala, Python and R shells.</p>
+        <p>for more read the quick start guide <a href="https://spark.apache.org/docs/latest/quick-start.html">here</a></p>
+        </p>
+        <div class="btn-load-more">
+            <router-link to="/projects/bigquery/project" ><button title="BigQuery Components" class="load-more">Project</button></router-link>
+        </div>
     </div>
-    <!--</div>-->
-    <!--</div>-->
-
 </template>
-
 <script>
     export default {
 
@@ -103,7 +51,6 @@
 
 <style>
     <!--adding top margin for all h4 elements in this page-->
-
     h4{
         margin-top:2em;
     }
