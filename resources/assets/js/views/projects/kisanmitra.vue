@@ -67,12 +67,13 @@
             farming strategies according to environment and market.</p><br>
         <h4 id="technology-used">technology used</h4>
         <p >
-            <a  target='_blank' href="//laravel.com" ><img class='image' width='250' height='200'
-                                                         src="https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"></a>
+            <a  target='_blank' href="//laravel.com" ><img class='image' width='250' height='200' src="https://camo.githubusercontent.com/5ceadc94fd40688144b193fd8ece2b805d79ca9b/68747470733a2f2f6c61726176656c2e636f6d2f6173736574732f696d672f636f6d706f6e656e74732f6c6f676f2d6c61726176656c2e737667"></a>
         </p>
         <p>
             <a  target='_blank' href="//scikit-learn.org" ><img width='250' height='100' src="http://www.scipy-lectures.org/_images/scikit-learn-logo.png"></a>
-        </p><br>
+        </p>
+        <em><b>and Python, PHP, JQuery, Ajax.</b></em> <br>
+        <br>
         <h4 id="contributing">Contributing</h4>
         <p>You are welcome to contribute to this project,<br />
             Thank you for considering contributing for the greater good for farmers!</p>
@@ -90,8 +91,7 @@
         <h4 id="license">License</h4>
         <p>kisanmitra is open-sourced software licensed under the <a  target='_blank' href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
     </div>
-    <!--</div>-->
-    <!--</div>-->
+
 
 </template>
 
