@@ -23,7 +23,7 @@
         </ul>
         <p style="font-size:1em">on clicking view history link corresponding to every panel, we can see history of corresponding job category.</p>
         <p style="font-size:1em"><img style='margin:1em;' align="left"  src="images/dashboard.png" alt="Carwale System Archictecture" /></p>
-        </p>
+
         <h4 style='margin-top:1em'  id="submit-job">Submit Job</h4>
         <p style="font-size:1em">
         <p style="font-size:1em">Submit Job Page allows user to get quick result for smaller jobs, the result of these small jobs will be store in file system, so maximum number of rows which will be returned is 5000, so if you wanted to get big result you have to Submit Job which will be discussed in next section.</p>
@@ -52,15 +52,15 @@
         </p>
         <h4 style='margin-top:1em' id="job-history">Job History</h4>
         <p>
-            <p><a href="/job/history">Job History Page</a> allows user to look through all his/her job history, user can user this information to resubmit jobs so he doesnot need to fill all information again</p>
-            <p>As in Realtime most of the jobs remain same, so this feature supposed to be very helpful to user.</p>
-            <p><strong>filters with status</strong> in all history pages provides functionality for searching through all jobs and getting only jobs associated with particular filter. you can also check more than one status to get desired job result.</p>
-            <p><img  style='margin:1em;' src="images/history.png" alt="Carwale System Archictecture" /></p>
+        <p><a href="/job/history">Job History Page</a> allows user to look through all his/her job history, user can user this information to resubmit jobs so he doesnot need to fill all information again</p>
+        <p>As in Realtime most of the jobs remain same, so this feature supposed to be very helpful to user.</p>
+        <p><strong>filters with status</strong> in all history pages provides functionality for searching through all jobs and getting only jobs associated with particular filter. you can also check more than one status to get desired job result.</p>
+        <p><img  style='margin:1em;' src="images/history.png" alt="Carwale System Archictecture" /></p>
         </p>
         <h4 style='margin-top:1em' id="admin-panel">Admin Panel</h4>
         <p>
-            <p>Admin Panel is available to users having admin privileges , admin will have his dedicated dashboard where he/she could be able to see all job data (like simple user do for himself).</p>
-            <p>Admin Could also be able to manager users and their job and he can also see all job history and history specific to any user.</p>
+        <p>Admin Panel is available to users having admin privileges , admin will have his dedicated dashboard where he/she could be able to see all job data (like simple user do for himself).</p>
+        <p>Admin Could also be able to manager users and their job and he can also see all job history and history specific to any user.</p>
         </p>
         <div class="btn-load-more">
             <router-link to="/projects/bigquery/architecture" ><button title="BigQuery Architecture" class="load-more">Architecture</button></router-link>

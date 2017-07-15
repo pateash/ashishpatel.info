@@ -62,7 +62,7 @@
                         <div class="media-content">
                             <div class="content">
                                 <p><!--title-->
-                                    <span style="font-size:1.4em"> GrabPustak <span style="font-size:0.7em"> , StartUp </span>
+                                    <span style="font-size:1.4em"> GrabPustak <span style="font-size:0.7em"> , Online Library </span>
                                       <router-link to="/projects/grabpustak"><span class="tag is-primary"> Know More </span></router-link>
 
                                     </span>
