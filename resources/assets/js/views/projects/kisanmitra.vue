@@ -89,6 +89,9 @@
         <br>
         <h4 id="license">License</h4>
         <p>kisanmitra is open-sourced software licensed under the <a  target='_blank' href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
+ <br>
+      <h4 >Say Something about KisanMitra  </h4>
+        <div id="disqus_thread"></div>
     </div>
 
 
@@ -97,7 +100,7 @@
 <script>
     export default {
 
-    }
+    };
 </script>
 
 <style>

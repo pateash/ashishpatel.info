@@ -89,6 +89,7 @@
         <br>
         <h4 id="license">License</h4>
         <p>kisanmitra is open-sourced software licensed under the <a  target='_blank' href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
+
     </div>
     <!--</div>-->
     <!--</div>-->

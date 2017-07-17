@@ -52,16 +52,15 @@
                 </div>
             </div>
         </div>
-        <!--<h4 >Say Something about this project  </h4>-->
-        <!--<div id="disqus_thread"></div>-->
-       </div>
+        <h4 >Say Something about ManitMoodle  </h4>
+        <div id="disqus_thread"></div>
+    </div>
 </template>
 
 <script>
     export default {
 
-    }
-
+    };
 </script>
 
 

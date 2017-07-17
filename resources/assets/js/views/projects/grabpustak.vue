@@ -13,7 +13,7 @@
             post class assignment.
             Students could be able to see these assignment and submit them.
         </p>
-    <br>
+        <br>
 
         <h4 id="technology-used">technology used</h4>
         <p >
@@ -22,8 +22,9 @@
         <p>
             <a  target='_blank' href="//jquery.com" ><img width='180' height='100' src="images/logo13.png"></a>
         </p><br>
-        <em><b>and PHP, MySQL, Javascript, Ajax</b></em>. <br>
-
+        <em><b>and PHP, MySQL, Javascript, Ajax</b></em>. <br><br>
+        <h4 >Say Something about Grabpustak  </h4>
+        <div id="disqus_thread"></div>
     </div>
 
 </template>

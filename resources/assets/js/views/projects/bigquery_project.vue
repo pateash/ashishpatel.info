@@ -56,22 +56,24 @@
         <p>As in Realtime most of the jobs remain same, so this feature supposed to be very helpful to user.</p>
         <p><strong>filters with status</strong> in all history pages provides functionality for searching through all jobs and getting only jobs associated with particular filter. you can also check more than one status to get desired job result.</p>
         <p><img  style='margin:1em;' src="images/history.png" alt="Carwale System Archictecture" /></p>
-        </p>
         <h4 style='margin-top:1em' id="admin-panel">Admin Panel</h4>
         <p>
         <p>Admin Panel is available to users having admin privileges , admin will have his dedicated dashboard where he/she could be able to see all job data (like simple user do for himself).</p>
         <p>Admin Could also be able to manager users and their job and he can also see all job history and history specific to any user.</p>
-        </p>
         <div class="btn-load-more">
             <router-link to="/projects/bigquery/architecture" ><button title="BigQuery Architecture" class="load-more">Architecture</button></router-link>
         </div>
+        <h4 >Say Something about ManitMoodle  </h4>
+
+        <div id="disqus_thread"></div>
     </div>
 </template>
 
 <script>
     export default {
 
-    }
+    };
+
 </script>
 
 <style>
