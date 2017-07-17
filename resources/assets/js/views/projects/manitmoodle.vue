@@ -4,7 +4,7 @@
     <div class="inner-item" style="margin-top:-2em">
         <span style="font-size:2em">manit moodle <span class="tag is-primary" style="font-size:0.4em;"><a href="//manitmoodle.tk" target="_blank" style="color:white;">Visit Website</a></span></span>
         <br>
-        <p align="left"><img class="image"  width="60%" height="50%" src="/images/moodle-big.gif"></p>
+        <p align="left"><img class="image"  width="50%" height="40%" src="/images/moodle-big.gif"></p>
         <br>
         <h4 id="about-manitmoodle">About&nbsp;MANIT MOODLE</h4>
         <p>

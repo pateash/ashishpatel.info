@@ -6,7 +6,7 @@
         <p align="center"><img src="http://www.indiawaterportal.org/sites/indiawaterportal.org/files/KSY.jpg"></p>
         <br>
         <p align="center">
-            <a href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg" alt="Latest UnStable Version" class="image"></a>
+            <a  target='_blank' href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/v/unstable.svg" alt="Latest UnStable Version"></a>
             <a  target='_blank' href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/v/stable.svg" alt="Latest Stable Version"></a>
             <a  target='_blank' href="https://packagist.org/packages/ashishpatel0720/kisanmitra"><img src="https://poser.pugx.org/ashishpatel0720/kisanmitra/license.svg" alt="License"></a>
         </p>
