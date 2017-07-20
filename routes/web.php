@@ -24,8 +24,8 @@ Route::get('/', function () {
 	 So we have to just redirect any url to home page which is 'home.blade.php' here 
  */
 
-Route::get('/{anything}', function () {
-    return view('home');
-})->where(['anything'=>'.+']);
+// Route::get('/{anything}', function () {
+//     return view('home');
+// })->where(['anything'=>'^[^.]+$']);
 
 //we can also use where(['anything'=>'.*'], so we don't have to have two routes

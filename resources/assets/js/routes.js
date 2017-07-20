@@ -54,7 +54,7 @@ let routes=[
 ]
 
 export default new VueRouter({
-    mode:'history',
+    // mode:'history',
     routes:routes,
     linkActiveClass:'selected'
 });
