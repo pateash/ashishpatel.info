@@ -63,7 +63,7 @@
         <div class="btn-load-more">
             <router-link to="/projects/bigquery/architecture" ><button title="BigQuery Architecture" class="load-more">Architecture</button></router-link>
         </div>
-        <h4 >Say Something about ManitMoodle  </h4>
+        <h4 >Say Something about BigQuery  </h4>
 
         <div id="disqus_thread"></div>
     </div>

@@ -61,7 +61,7 @@
                                     <span style="font-size:1.4em">X ( High School )<span style="font-size:0.6em"> (2010 - 2011)</span></span>
                                     <br>
                                     I.P.S. Academy, Bhind Madhya Pradesh , India<br>
-                                    <b>Percentage : 83.40%</b>
+                                    <b>Percentage : 81.30%</b>
                                 </p>
                             </div><!--font-awesome icons-->
                         </div>

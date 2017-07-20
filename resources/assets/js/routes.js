@@ -51,10 +51,10 @@ let routes=[
         component:require("./views/projects/bigquery_project.vue")
     },
 
-
 ]
 
 export default new VueRouter({
+    mode:'history',
     routes:routes,
     linkActiveClass:'selected'
 });
