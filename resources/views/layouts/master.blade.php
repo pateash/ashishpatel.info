@@ -65,7 +65,7 @@
     </div>
     {{--TODO: why we have to use CDN here--}}
     {{--<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>--}}
-    <script src="js/jquery.js"></script>
+    <script src="/js/jquery.js"></script>
     <script src="{{mix('/js/build.js')}}"></script>
     <script id="dsq-count-scr" src="//ashishpatel0720.disqus.com/count.js" async></script>
 </body>

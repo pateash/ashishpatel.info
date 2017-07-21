@@ -114,7 +114,7 @@
                                     </span>
                                     <br>
                                     Online Captcha Validation Application<br>
-                                    <b>HTML, CSS, JavaScript , PHP </b>
+                                    <b>HTML, CSS, Bootstrap, JavaScript , PHP </b>
                                 </p>
                             </div><!--font-awesome icons-->
                         </div>

@@ -23,10 +23,10 @@
         <h4 id="technology-used">technology used</h4>
         <p >
             <a  target='_blank' href="//php.net" ><img class='image' width='250' height='200'
-                                                       src="images/logo3.svg"></a>
+                                                       src="/images/logo3.svg"></a>
         </p>
         <p>
-            <a  target='_blank' href="//mysql" ><img width='250' height='100' src="images/logo5.png"></a>
+            <a  target='_blank' href="//mysql" ><img width='250' height='100' src="/images/logo5.png"></a>
         </p>
         <em><b>and Javascript, HTML, CSS.</b></em>
         <br>
