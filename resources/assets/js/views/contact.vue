@@ -20,19 +20,20 @@
             </div>
             <div class="column is-8-desktop ">
                 <div class="contact-form ">
-                    <form action="#" method="post" @submit.prevent="saveContact">
+                    <form action="https://formspree.io/ashishpatel0720@gmail.com" method="post" >
                         <div class="columns">
                             <div class="column is-half">
                                 <label>Name</label> <input name="name" v-model='name' type="text" placeholder="">
                             </div>
                             <div class="column is-half">
-                                <label>Email</label> <input name="email" v-model='email' type="text" placeholder="">
+                                <label>Email</label> <input name="_replyto" v-model='email' type="text" placeholder="">
                             </div>
                         </div>
                         <label>Message</label> <br>
                         <textarea name="message" v-model='message' placeholder=""></textarea>
                         <!--TODO: complete ajax request which will send an email to ashishpatel0720@gmail.com-->
                         <input type="submit" value="Send Message" class="btn">
+                        <input type="hidden" name="_next" value="/contact" />
                     </form>
                 </div>
             </div>
