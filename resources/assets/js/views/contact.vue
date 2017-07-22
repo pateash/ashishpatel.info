@@ -45,9 +45,9 @@
     export default {
         data(){
             return {
-                email: "",
-                name: "",
-                message: ""
+                email: "ashish200893@gmail.com",
+                name: "Harish Kumar",
+                message: "                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores consequatur deleniti deserunt dignissimos ex fugiat ipsam iure libero molestiae numquam omnis perferendis quam quas quasi, recusandae similique temporibus vel voluptatem?\n"
             }
         },
         methods:{
@@ -57,11 +57,15 @@
                     name:this.name,
                     message:this.message
                 })
-                    .then(function () {
+                    .then(function (response) {
+                         console.log("success");
+                         console.log(response.data);
 
+                          
                     })
-                    .catch(function () {
-                        console.error("Error Occured");
+                    .catch(function (response) {
+                       console.error("Error Occured");
+                        console.log(response.data);
 
                     })
             }

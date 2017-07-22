@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 
-Route::post("/saveContact",'ContactController@sendEmail');
+Route::post("/saveContact",'ContactController@index');
 
 /*
 	this needs to be added as we have used 'mode:history' in vue-router,
