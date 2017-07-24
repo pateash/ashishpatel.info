@@ -3,18 +3,16 @@
 
 
 import "./scripts/bootstrap.min"
-import "./scripts/SmoothScroll"
+// import "./scripts/SmoothScroll"
 import "./scripts/isotope.pkgd.min"
-import "./scripts/theia-sticky-sidebar"
+import "./scripts/theia-sticky-sidebar" 
 import "./scripts/jquery.slicknav"
 import "./scripts/owl.carousel"
 import "./scripts/main"
 
 
 window.Vue = require('vue');
-
 window.axios = require('axios');
-
 window.moment=require('moment');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

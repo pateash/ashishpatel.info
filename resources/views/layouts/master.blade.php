@@ -14,7 +14,7 @@
         <!-- Latest compiled and minified JS -->
         <header>
             <div class="logo">
-                <h3><a href="#">AP</a></h3>
+                <h3><a href="/">AP</a></h3>
             </div>
             @include("layouts.nav")
             <div class="social-icons">
@@ -42,23 +42,23 @@
                 <div class="our-clients" > <!--here represent toolbox-->
                     <h4>Skills</h4>
                     <div class="row items owl-carousel" id="owl-toolbox" >
-                        <img src="/images/logo1.png" class="img-responsive" alt="" >
-                        <img src="/images/logo2.png" title='VueJS' class="img-responsive" alt="">
+                        <img src="/images/logo1-min.png" class="img-responsive" alt="" >
+                        <img src="/images/logo2-min.png" title='VueJS' class="img-responsive" alt="">
                         <img src="/images/logo3.svg" class="img-responsive" alt="">
-                        <img src="/images/logo4.png" class="img-responsive" alt="">
-                        <img src="/images/logo5.png" class="img-responsive" alt="">
-                        <img src="/images/logo6.png" class="img-responsive" alt="">
-                        <img src="/images/logo7.png" class="img-responsive" alt="">
-                        <img src="/images/logo8.png" class="img-responsive" alt="">
-                        <img src="/images/logo9.png" class="img-responsive" alt="">
-                        <img src="/images/logo10.png" class="img-responsive" alt="">
-                        <img src="/images/logo11.png" class="img-responsive" alt="">
-                        <img src="/images/logo12.png" class="img-responsive" alt="">
-                        <img src="/images/logo13.png" class="img-responsive" alt="">
-                        <!--<img src="/images/logo14.png" class="img-responsive" alt="">-->
+                        <img src="/images/logo4-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo5-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo6-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo7-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo8-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo9-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo10-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo11-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo12-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo13-min.png" class="img-responsive" alt="">
+                        <!--<img src="/images/logo14-min.png" class="img-responsive" alt="">-->
                         <img src="/images/logo15.svg" class="img-responsive" alt="">
-                        <img src="/images/logo16.png" class="img-responsive" alt="">
-                        <img src="/images/logo1.png" class="img-responsive" alt="">
+                        <img src="/images/logo16-min.png" class="img-responsive" alt="">
+                        <img src="/images/logo1-min.png" class="img-responsive" alt="">
                     </div>
                 </div>
             </div>
