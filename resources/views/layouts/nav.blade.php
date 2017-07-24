@@ -19,7 +19,7 @@
             <router-link to="/contact">Contact</router-link>
         </li>
         <li>
-            <a src="/assets/cv-ashish.pdf" download>CV</a>
+            <a href="/cv_ashishpatel.info.pdf" target="_blank">download cv</a>
         </li>
     </ul>
 </div>

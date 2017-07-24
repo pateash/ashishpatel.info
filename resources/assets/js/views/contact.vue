@@ -5,13 +5,13 @@
                 <h4>Contact Me</h4>
                 You can reach me to any of these platforms,<br><br>
                 <div class="social-icons">
-                    <a target='_blank' title='linkedin' href=https://linkedin.com/in/ashishpatel0720 style="color:#006699"><i class="fa fa-linkedin-square fa-2x"></i></a>
-                    <a target='_blank' title='github' href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-2x"></i></a>
-                    <a target='_blank' title='Facebook' href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-2x"></i></a>
-                    <a target='_blank' title='Email' href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-2x"></i></a>
-                    <a target='_blank' title='Instagram' href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-2x"></i></a>
-                    <a target='_blank' title='stackoverflow' href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-2x"></i></a>
-                    <a target='_blank' title='twitter' href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-2x"></i></a>
+                    <a target='_blank' title='linkedin' href=https://linkedin.com/in/ashishpatel0720 style="color:#006699"><i class="fa fa-2x fa-linkedin-square "></i></a>
+                    <a target='_blank' title='github' href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-2x fa-github "></i></a>
+                    <a target='_blank' title='Facebook' href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-2x fa-facebook-square "></i></a>
+                    <a target='_blank' title='Email' href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-2x fa-envelope-o "></i></a>
+                    <a target='_blank' title='Instagram' href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-2x fa-instagram "></i></a>
+                    <a target='_blank' title='stackoverflow' href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-2x fa-stack-overflow "></i></a>
+                    <a target='_blank' title='twitter' href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-2x fa-twitter "></i></a>
                 </div>
 
                 <hr></hr>
@@ -23,14 +23,14 @@
                     <form action="https://formspree.io/ashishpatel0720@gmail.com" method="post" >
                         <div class="columns">
                             <div class="column is-half">
-                                <label>Name</label> <input name="name" v-model='name' type="text" placeholder="">
+                                <label>Name</label> <input name="name" v-model='name' type="text" placeholder="your name" required>
                             </div>
                             <div class="column is-half">
-                                <label>Email</label> <input name="_replyto" v-model='email' type="text" placeholder="">
+                                <label>Email</label> <input name="_replyto" v-model='email' type="email" placeholder="your email" required>
                             </div>
                         </div>
                         <label>Message</label> <br>
-                        <textarea name="message" v-model='message' placeholder=""></textarea>
+                        <textarea name="message" v-model='message' placeholder="message here" required></textarea>
                         <!--TODO: complete ajax request which will send an email to ashishpatel0720@gmail.com-->
                         <input type="submit" value="Send Message" class="btn">
                         <input type="hidden" name="_next" value="/contact" />
@@ -46,9 +46,9 @@
     export default {
         data(){
             return {
-                email: "ashish200893@gmail.com",
-                name: "Harish Kumar",
-                message: "                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores consequatur deleniti deserunt dignissimos ex fugiat ipsam iure libero molestiae numquam omnis perferendis quam quas quasi, recusandae similique temporibus vel voluptatem?\n"
+                email: "",
+                name: "",
+                message: ""
             }
         },
         methods:{

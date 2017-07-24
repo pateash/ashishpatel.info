@@ -7,6 +7,7 @@
     <title>Ashish Patel's Portfolio</title>
     <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
     <link href="{{mix('/css/build.css')}}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -41,31 +42,31 @@
                 <div class="our-clients" > <!--here represent toolbox-->
                     <h4>Skills</h4>
                     <div class="row items owl-carousel" id="owl-toolbox" >
-                        <img src="images/logo1.png" class="img-responsive" alt="" >
-                        <img src="images/logo2.png" title='VueJS' class="img-responsive" alt="">
-                        <img src="images/logo3.svg" class="img-responsive" alt="">
-                        <img src="images/logo4.png" class="img-responsive" alt="">
-                        <img src="images/logo5.png" class="img-responsive" alt="">
-                        <img src="images/logo6.png" class="img-responsive" alt="">
-                        <img src="images/logo7.png" class="img-responsive" alt="">
-                        <img src="images/logo8.png" class="img-responsive" alt="">
-                        <img src="images/logo9.png" class="img-responsive" alt="">
-                        <img src="images/logo10.png" class="img-responsive" alt="">
-                        <img src="images/logo11.png" class="img-responsive" alt="">
-                        <img src="images/logo12.png" class="img-responsive" alt="">
-                        <img src="images/logo13.png" class="img-responsive" alt="">
-                        <!--<img src="images/logo14.png" class="img-responsive" alt="">-->
-                        <img src="images/logo15.svg" class="img-responsive" alt="">
-                        <img src="images/logo16.png" class="img-responsive" alt="">
-                        <img src="images/logo1.png" class="img-responsive" alt="">
+                        <img src="/images/logo1.png" class="img-responsive" alt="" >
+                        <img src="/images/logo2.png" title='VueJS' class="img-responsive" alt="">
+                        <img src="/images/logo3.svg" class="img-responsive" alt="">
+                        <img src="/images/logo4.png" class="img-responsive" alt="">
+                        <img src="/images/logo5.png" class="img-responsive" alt="">
+                        <img src="/images/logo6.png" class="img-responsive" alt="">
+                        <img src="/images/logo7.png" class="img-responsive" alt="">
+                        <img src="/images/logo8.png" class="img-responsive" alt="">
+                        <img src="/images/logo9.png" class="img-responsive" alt="">
+                        <img src="/images/logo10.png" class="img-responsive" alt="">
+                        <img src="/images/logo11.png" class="img-responsive" alt="">
+                        <img src="/images/logo12.png" class="img-responsive" alt="">
+                        <img src="/images/logo13.png" class="img-responsive" alt="">
+                        <!--<img src="/images/logo14.png" class="img-responsive" alt="">-->
+                        <img src="/images/logo15.svg" class="img-responsive" alt="">
+                        <img src="/images/logo16.png" class="img-responsive" alt="">
+                        <img src="/images/logo1.png" class="img-responsive" alt="">
                     </div>
                 </div>
             </div>
         </div>
     </div>
     {{--TODO: why we have to use CDN here--}}
-    {{--<script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>--}}
-    <script src="/js/jquery.js"></script>
+    <script lang="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>
+    {{--<script src="/js/jquery.js"></script>--}}
     <script src="{{mix('/js/build.js')}}"></script>
     <script id="dsq-count-scr" src="//ashishpatel0720.disqus.com/count.js" async></script>
 </body>

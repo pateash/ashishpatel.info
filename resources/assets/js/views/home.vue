@@ -61,13 +61,13 @@
 							<div class="inner-item">
 								<div class="our-clients" style="margin:0em;margin:-2em -2em;"> <!--here represent toolbox-->
 									<div class="row items owl-carousel" id="owl-social-icons">
-										<a target='_blank' href=https://linkedin.com/in/ashishpatel0720><i class="fa fa-linkedin-square fa-4x"></i></a>
-										<a target='_blank' href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-4x"></i></a>
-										<a target='_blank' href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-4x"></i></a>
-										<a target='_blank' href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-4x"></i></a>
-										<a target='_blank' href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-4x"></i></a>
-										<a target='_blank' href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-4x"></i></a>
-										<a target='_blank' href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-4x"></i></a>
+										<a target='_blank' href=https://linkedin.com/in/ashishpatel0720><i class="fa fa-linkedin-square fa-3x"></i></a>
+										<a target='_blank' href=https://facebook.com/ashishpatel0720 style="color:#3b5998"><i class="fa fa-facebook-square fa-3x"></i></a>
+										<a target='_blank' href="mailto:ashishpatel0720@gmail.com" ><i class="fa fa-envelope-o fa-3x"></i></a>
+										<a target='_blank' href=https://instagram.com/ashishpatel0720 style="color: #cd486b"><i class="fa fa-instagram fa-3x"></i></a>
+										<a target='_blank' href=https://stackoverflow.com/users/6178783/ashish-patel style="color:#f48024"><i class="fa fa-stack-overflow fa-3x"></i></a>
+										<a target='_blank' href=https://github.com/ashishpatel0720 style="color:#5d2973"><i class="fa fa-github fa-3x"></i></a>
+										<a target='_blank' href=https://twitter.com/ashishpatel0720 style="color:#32cdfd"><i class="fa fa-twitter fa-3x"></i></a>
 									</div>
 								</div>
 							</div>
