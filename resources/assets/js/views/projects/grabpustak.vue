@@ -17,10 +17,10 @@
 
         <h4 id="technology-used">technology used</h4>
         <p >
-            <a  target='_blank' href="//codeigniter.com/" ><img class='image' width='250' height='120' src="/images/logo4.png"></a>
+            <a  target='_blank' href="//codeigniter.com/" ><img class='image' width='250' height='120' src="/images/logo4-min.png"></a>
         </p>
         <p>
-            <a  target='_blank' href="//jquery.com" ><img width='180' height='100' src="/images/logo13.png"></a>
+            <a  target='_blank' href="//jquery.com" ><img width='180' height='100' src="/images/logo13-min.png"></a>
         </p><br>
         <em><b>and PHP, MySQL, Javascript, Ajax</b></em>. <br><br>
         <h4 >Say Something about Grabpustak  </h4>
