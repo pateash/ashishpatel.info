@@ -4,7 +4,7 @@
     <div class="inner-item" style="margin-top:-2em">
         <span style="font-size:2em">Captcha <span class="tag is-primary" style="font-size:0.4em;"><a href="//captcha.tk" target="_blank" style="color:white;">Visit Website</a></span></span>
         <br>
-        <p align="left"><img class="image"  width="40%" height="40%" src="https://vignette3.wikia.nocookie.net/central/images/6/66/Captcha.png/revision/latest?cb=20121024110649"></p>
+        <p align="left"><img class="image"  width="40%" height="40%" src="https://wpforms.com/wp-content/uploads/2016/12/captcha-example-e1484080114733.png"></p>
         <br>
         <h4 id="about-manitmoodle">About&nbsp;Captcha</h4>
         <p>
