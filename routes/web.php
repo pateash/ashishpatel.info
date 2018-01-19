@@ -12,7 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('home');
+//    return view('home');
+    $url='http://ashish.live';
+    return Redirect::away($url);
 });
 
 
@@ -27,8 +29,10 @@ Route::post("/saveContact",'ContactController@index');
  */
 
 //this needs to be kept at last so when it doesn't match anything then it comes here
- Route::get('/{anything}', function () {
-     return view('home');
+ Route::get('/{anything}', function ($anything) {
+//     return view('home');
+     $url='http://ashish.live';
+     return Redirect::away($url.'/'.$anything);
  })->where(['anything'=>'.+']);
 
 //we can also use where(['anything'=>'.*'], so we don't have to have two routes
